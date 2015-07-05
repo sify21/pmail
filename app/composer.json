@@ -18,6 +18,6 @@
   "require":
   {
     "phpmailer/phpmailer": "~5.2",
-    "php-imap/php-imap": "2.0.1"
+    "php-imap/php-imap": "~2.0"
   }
 }

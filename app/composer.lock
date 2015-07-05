@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b8e90cfe7fcf0e0609516d0c026bb520",
+    "hash": "5ca3dc609dc5b38bb4001c56fd7df1dd",
     "packages": [
         {
             "name": "php-imap/php-imap",
