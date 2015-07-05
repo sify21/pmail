@@ -1,0 +1,56 @@
+#!/bin/
+<?php
+/**
+ * Created by PhpStorm.
+ * User: sify
+ * Date: 15-7-4
+ * Time: 下午4:44
+ */
+require __DIR__.'/../vendor/autoload.php';
+$filePath = __DIR__.'/../config/email.json';
+$jsonString = file_get_contents($filePath);
+$jsonObj = json_decode($jsonString);
+$mailBox = new PhpImap\Mailbox("{{$jsonObj->imap_address}:993/imap/ssl}INBOX", $jsonObj->email_address, $jsonObj->password);
+$mailIds = $mailBox->searchMailbox('UNSEEN');
+//若没有新邮件则直接退出
+if(!$mailIds)
+{
+//    system('echo 0 > 0.txt');
+    exit;
+}
+//else
+//{
+//    $count = count($mailIds);
+//    system("echo {$count} > 1.txt");
+//}
+$con = mysql_connect('localhost:3306', 'username', 'password');
+mysql_select_db('dbname', $con);
+if(!$con)
+{
+    //system('echo 0 > 0.txt');
+    exit;
+}
+foreach($mailIds as $mailId)
+{
+    $mail = $mailBox->getMail($mailId);
+    $mailBox->markMailAsRead($mailId);
+    $subject = $mail->subject;
+    $body = $mail->textPlain;
+    $fromAddress = $mail->fromAddress;
+    $receiveDate = $mail->date;
+
+    //system("echo {$body} > 2.txt");
+
+    $result = mysql_query("SELECT id FROM users WHERE role='dispatcher'");
+    $dispatcher_ids = array();
+    while($row = mysql_fetch_array($result))
+    {
+        $dispatcher_ids[] = $row['id'];
+    }
+    $dispatcher_id = $dispatcher_ids[ array_rand($dispatcher_ids) ];
+    mysql_query("INSERT INTO receiveMail (subject, body, fromAddress, receiveDate, dispatcher_id)
+                VALUES ('{$subject}', '{$body}', '{$fromAddress}', '{$receiveDate}', '{$dispatcher_id}')");
+}
+mysql_close($con);
+//system('echo 5 > 5.txt');
+exit;

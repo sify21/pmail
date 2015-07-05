@@ -1,0 +1,23 @@
+{
+  "repositories":[
+	{
+		"packagist": false
+	},
+  	{
+  		"type":"composer",
+  		"url":"http://pkg.phpcomposer.com/repo/packagist/" 
+  	},
+  	{
+		"type":"git",
+		"url":"https://github.com/barbushin/php-imap.git"
+  	}
+  	
+  ],
+
+
+  "require":
+  {
+    "phpmailer/phpmailer": "~5.2",
+    "php-imap/php-imap": "2.0.1"
+  }
+}
