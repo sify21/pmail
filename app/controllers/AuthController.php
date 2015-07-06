@@ -6,7 +6,7 @@
 class AuthController extends Base
 {
     /**
-     * @Route("/login", methods = "POST,OPTIONS")
+     * @Route("/login", methods = {"POST", "OPTIONS"})
      */
     public function LoginAction()
     {
