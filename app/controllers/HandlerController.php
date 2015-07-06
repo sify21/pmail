@@ -83,7 +83,7 @@ class HandlerController extends Base{
     public function CreateReplyMailActions()
     {
         $info = $this->request->getJsonRawBody();
-        if(!isset($info->email_id)||!isset($info->dispatcher_id)||!isset($info->handler_id))
+        if(!isset($info->subject)||!isset($info->body)||!isset($info->toWhom))
         {
             $this->response->setJsonContent(['message' => 'No Data!']);
             $this->response->send();
