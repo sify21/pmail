@@ -130,6 +130,7 @@ class DispatcherController extends Base{
     }
 
     /**
+     * 这个功能前台直接调用update完成了
      * @@Route("/dispatch", methods = {"PUT", "OPTIONS"})
      */
     public function dispatchAction()
@@ -144,6 +145,35 @@ class DispatcherController extends Base{
         $email_id = $info->email_id;
         $dispatcher_id = $info->dispatcher_id;
         $handler_id = $info->handler_id;
-
+        $email = ReceiveMail::findFirst([
+            'conditions' => 'id=?1',
+            'bind' => [1 => $email_id]
+        ]);
+        $dispatcher = Users::findFirst([
+            'conditions' => 'id=?1',
+            'bind' => [1 => $dispatcher_id]
+        ]);
+        $handler = Users::findFirst([
+            'conditions' => 'id=?1',
+            'bind' => [1 => $handler_id]
+        ]);
+        if($email == null || $dispatcher == null || $handler==null)
+        {
+            $this->response->setJsonContent(['message' => "ID doesn't exist!"]);
+        }
+        elseif($dispatcher->role != 'dispatcher' || $handler->role != 'handler')
+        {
+            $this->response->setJsonContent(['message' => "ID-Role doesn't match!"]);
+        }
+        else
+        {
+            try
+            {
+                $email->dispatcher_id = $dispatcher_id;
+                $email->save();
+            }
+            catch(Exceptions $e)
+            {}
+        }
     }
 }

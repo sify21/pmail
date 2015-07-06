@@ -61,9 +61,9 @@ class HandlerController extends Base{
     }
 
     /**
-     * @Route("getAssessors", methods = {"GET", "OPTIONS"})
+     * @Route("getAssessorList", methods = {"GET", "OPTIONS"})
      */
-    public function GetAssessorsAction()
+    public function GetAssessorListAction()
     {
         $assessors = Users::find([
             'conditions' => 'role=?1',

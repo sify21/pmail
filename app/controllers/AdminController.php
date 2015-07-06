@@ -138,4 +138,30 @@ class AdminController extends Base
         $this->response->send();
         return;
     }
+
+    /**
+     * @Route("/deleteUser", methods = {"DELETE", "OPTIONS"})
+     */
+    public function DeleteUserAction()
+    {
+        $info = $this->request->getJsonRawBody();
+        if(!isset($info->user_id))
+        {
+            $this->response->setJsonContent(['message' => 'No Data!']);
+            $this->response->send();
+            return;
+        }
+        $user = Users::findFirst([
+            'conditions' => 'id=?1',
+            'bind' => [1 => $info->id]
+        ]);
+        if($user == null)
+        {
+            $this->response->setJsonContent(['message' => 'id not exist!']);
+        }
+        else
+        {
+            $user->delete();
+        }
+    }
 }
