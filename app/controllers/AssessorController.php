@@ -9,10 +9,9 @@ class AssessorController extends Base{
      */
     public function GetUnAssessedAction()
     {
-        $uid = $this->request->get('uid');
         $unAssessedMails = ReplyMail::find([
             'conditions' => 'isAssessed=?1 AND assessor_id=?2',
-            'bind' => [1 => 0, 2 => $uid],
+            'bind' => [1 => 0, 2 => $this->session->get('user_id')],
             'column' => 'id, fromAddress, subject, receiveDate'
         ]);
         if($unAssessedMails->getFirst() == null)
@@ -37,10 +36,9 @@ class AssessorController extends Base{
      */
     public function GetAssessedAction()
     {
-        $uid = $this->request->get('uid');
         $assessedMails = ReplyMail::find([
             'conditions' => 'isAssessed=?1 AND assessor_id=?2',
-            'bind' => [1 => 1, 2 => $uid],
+            'bind' => [1 => 1, 2 => $this->session->get('user_id')],
             'column' => 'id, fromAddress, subject, receiveDate'
         ]);
         if($assessedMails->getFirst() == null)

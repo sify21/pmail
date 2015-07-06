@@ -9,10 +9,9 @@ class DispatcherController extends Base{
      */
     public function GetUnDispatchedAction()
     {
-        $uid = $this->request->get('uid');
         $unDispatchedMails = ReceiveMail::find([
             'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
-            'bind' => [1 => 0, 2 => $uid],
+            'bind' => [1 => 0, 2 => $this->session->get('user_id')],
             'column' => 'id, fromAddress, subject, receiveDate'
         ]);
         if($unDispatchedMails->getFirst() == null)
@@ -37,10 +36,9 @@ class DispatcherController extends Base{
      */
     public function GetDispatchedAction()
     {
-        $uid = $this->request->get('uid');
         $dispatchedMails = ReceiveMail::find([
             'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
-            'bind' => [1 => 1, 2 => $uid],
+            'bind' => [1 => 1, 2 => $this->session->get('user_id')],
             'column' => 'id, fromAddress, subject, receiveDate'
         ]);
         if($dispatchedMails->getFirst() == null)
@@ -65,10 +63,9 @@ class DispatcherController extends Base{
      */
     public function GetUnSeenAction()
     {
-        $uid = $this->request->get('uid');
         $unSeenMails = ReceiveMail::find([
             'conditions' => 'isSeen=?1 AND dispatcher_id=?2',
-            'bind' => [1 => 0, 2 => $uid],
+            'bind' => [1 => 0, 2 => $this->session->get('user_id')],
             'column' => 'id, fromAddress, subject'
         ]);
         $mailList = array();
