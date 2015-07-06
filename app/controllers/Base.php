@@ -9,7 +9,7 @@ class Base extends \Phalcon\Mvc\Controller
         $this->view->disable();
         $this->response->setContentType('application/Json','UTF-8');
 
-        $this->response->setHeader('Access-Control-Allow-Origin', 'http://localhost:8889');
+        $this->response->setHeader('Access-Control-Allow-Origin', '*');
         $this->response->setHeader('Access-Control-Allow-Headers', 'Content-Type');
         $this->response->setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,HEAD,OPTIONS,PATCH');
     }
