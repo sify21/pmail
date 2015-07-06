@@ -140,7 +140,7 @@ class AdminController extends Base
     }
 
     /**
-     * @Route("/deleteUser", methods = {"DELETE", "OPTIONS"})
+     * @Route("/deleteUser", methods = {"GET", "DELETE", "OPTIONS"})
      */
     public function DeleteUserAction()
     {
@@ -158,10 +158,30 @@ class AdminController extends Base
         if($user == null)
         {
             $this->response->setJsonContent(['message' => 'id not exist!']);
+            $this->response->send();
+            return;
         }
-        else
+        $method = $this->request->getMethod();
+        if($method == 'GET')
         {
-            $user->delete();
+
         }
+        elseif($method == 'DELETE')
+        {
+            if($user->delete() == false)
+            {
+                $messages = "Delete Error:<br/>";
+                foreach ($user->getMessages() as $message) {
+                    $messages = $messages.$message."<br/>";
+                }
+                $this->response->setJsonContent(['message' => $message]);
+            }
+            else
+            {
+                $this->response->setJsonContent(['message' => 'Success!']);
+            }
+        }
+        $this->response->send();
+        return;
     }
 }

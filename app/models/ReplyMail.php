@@ -11,6 +11,7 @@ class ReplyMail extends Phalcon\Mvc\Model
     public $id;
     public $subject;
     public $body;
+    public $reply_id;
     public $toWhom;
     public $replyDate;
     public $handler_id;

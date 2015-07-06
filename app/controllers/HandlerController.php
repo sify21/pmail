@@ -78,4 +78,13 @@ class HandlerController extends Base{
         $this->response->send();
         return;
     }
+
+    /**
+     * @Route("/createReplyMail", methods = {"POST", "OPTIONS"})
+     */
+    public function CreateReplyMailActions()
+    {
+        $info = $this->request->getJsonRawBody();
+
+    }
 }
