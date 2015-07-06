@@ -61,7 +61,7 @@ class HandlerController extends Base{
     }
 
     /**
-     * @Route("getAssessorList", methods = {"GET", "OPTIONS"})
+     * @Route("/getAssessorList", methods = {"GET", "OPTIONS"})
      */
     public function GetAssessorListAction()
     {
