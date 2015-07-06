@@ -11,7 +11,7 @@
         extends Base
     {
         /**
-         * @Get('/email')
+         * @Route("/email", methods = {"GET", "OPTIONS"})
          */
         public function EmailAction()
         {
@@ -34,7 +34,7 @@
         }
 
         /**
-         * @Get('/code')
+         * @Route("/code", methods = {"GET", "OPTIONS"})
          */
         public function CodeAction()
         {
@@ -55,13 +55,4 @@
             $this->response->send();
             return;
         }
-        /**
-         * @Put('/dispatch')
-         *
-        public function dispatchAction()
-        {
-            $info = $this->request->getJsonRawBody();
-            $email_id = $info->email_id;
-            $dispatcher_id = $info->dispatcher_id;
-        }*/
     }

@@ -5,7 +5,7 @@
 
 class CommonController extends Base{
     /**
-     * @Put("/updateReceiveMail")
+     * @Route("/updateReceiveMail", methods = {"PUT", "OPTIONS"})
      */
     public function UpdateReceiveMailAction()
     {
@@ -54,7 +54,7 @@ class CommonController extends Base{
     }
 
     /**
-     * @Put("/updateReplyMail")
+     * @Route("/updateReplyMail", methods = {"POST", "OPTIONS"})
      */
     public function UpdateReplyMailAction()
     {

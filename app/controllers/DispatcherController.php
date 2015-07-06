@@ -5,7 +5,7 @@ require __DIR__.'/../vendor/autoload.php';
  */
 class DispatcherController extends Base{
     /**
-     * @Get("/getUnDispatched")
+     * @Route("/getUnDispatched", methods = {"GET", "OPTIONS"})
      */
     public function GetUnDispatchedAction()
     {
@@ -33,7 +33,7 @@ class DispatcherController extends Base{
     }
 
     /**
-     * @Get("/getDispatched")
+     * @Route("/getDispatched", methods = {"GET", "OPTIONS"})
      */
     public function GetDispatchedAction()
     {
@@ -61,7 +61,7 @@ class DispatcherController extends Base{
     }
 
     /**
-     * @Get("/getUnSeenMails")
+     * @Route("/getUnSeen", methods = {"GET", "OPTIONS"})
      */
     public function GetUnSeenAction()
     {
@@ -82,7 +82,7 @@ class DispatcherController extends Base{
     }
 
     /**
-     * @Get("/getHandlerList")
+     * @Route("/getHandlerList", methods = {"GET", "OPTIONS"})
      */
     public function GetHandlerListAction()
     {
@@ -108,7 +108,7 @@ class DispatcherController extends Base{
     }
 
     /**
-     * @Get("/getEmail")
+     * @Route("/getEmail", methods = {"GET", "OPTIONS"})
      */
     public function GetEmailAction()
     {
@@ -127,5 +127,23 @@ class DispatcherController extends Base{
         }
         $this->response->send();
         return;
+    }
+
+    /**
+     * @@Route("/dispatch", methods = {"PUT", "OPTIONS"})
+     */
+    public function dispatchAction()
+    {
+        $info = $this->request->getJsonRawBody();
+        if(!isset($info->email_id)||!isset($info->dispatcher_id)||!isset($info->handler_id))
+        {
+            $this->response->setJsonContent(['message' => 'No Data!']);
+            $this->response->send();
+            return;
+        }
+        $email_id = $info->email_id;
+        $dispatcher_id = $info->dispatcher_id;
+        $handler_id = $info->handler_id;
+
     }
 }

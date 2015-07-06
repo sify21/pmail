@@ -7,7 +7,7 @@ require __DIR__.'/../vendor/autoload.php';
 class AdminController extends Base
 {
     /**
-     * @Post("/addUser")
+     * @Route("/addUser", methods = {"POST", "OPTIONS"})
      */
     public function AddUserAction()
     {
@@ -53,7 +53,7 @@ class AdminController extends Base
     }
 
     /**
-     * @Get("/getEmailConf")
+     * @Route("/getEmailConf", methods = {"GET", "OPTIONS"})
      */
     public function GetEmailConfAction()
     {
@@ -66,11 +66,17 @@ class AdminController extends Base
     }
 
     /**
-     * @Put("/confEmail")
+     * @Route("/confEmail", methods = {"PUT", "OPTIONS"})
      */
     public function ConfEmailAction()
     {
         $info = $this->request->getJsonRawBody();
+        if(!isset($info->email_address)||!isset($info->imap_address)||!isset($info->password)||!isset($info->passwordConfirmation))
+        {
+            $this->response->setJsonContent(['message' => 'No Data!']);
+            $this->response->send();
+            return;
+        }
         $email_address = $info->email_address;
         $imap_address = $info->imap_address;
         $password = $info->password;
@@ -101,7 +107,7 @@ class AdminController extends Base
     }
 
     /**
-     * @Get("/getUsers")
+     * @Route("/getUsers", methods = {"GET", "OPTIONS"})
      */
     public function GetUsersAction()
     {

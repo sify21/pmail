@@ -5,7 +5,7 @@
 
 class HandlerController extends Base{
     /**
-     * @Get('/getUnHandled')
+     * @Route("/getUnHandled", methods = {"GET", "OPTIONS"})
      */
     public function GetUnHandledAction()
     {
@@ -33,7 +33,7 @@ class HandlerController extends Base{
     }
 
     /**
-     * @Get('/getHandled')
+     * @Route("/getHandled", methods = {"GET", "OPTIONS"})
      */
     public function GetHandledAction()
     {
@@ -61,7 +61,7 @@ class HandlerController extends Base{
     }
 
     /**
-     * @Get("/getAssessors")
+     * @Route("getAssessors", methods = {"GET", "OPTIONS"})
      */
     public function GetAssessorsAction()
     {

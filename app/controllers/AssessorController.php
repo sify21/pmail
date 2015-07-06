@@ -5,7 +5,7 @@
 
 class AssessorController extends Base{
     /**
-     * @Get("/getUnAssessed")
+     * @Route("/getUnAssessed", methods = {"GET", "OPTIONS"})
      */
     public function GetUnAssessedAction()
     {
@@ -33,7 +33,7 @@ class AssessorController extends Base{
     }
 
     /**
-     * @Get("/getAssessed")
+     * @Route("/getAssessed", methods = {"GET", "OPTIONS"})
      */
     public function GetAssessedAction()
     {
