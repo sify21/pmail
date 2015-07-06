@@ -9,9 +9,11 @@ class DispatcherController extends Base{
      */
     public function GetUnDispatchedAction()
     {
+        $uid = $this->request->get('uid');
+        //$uid = $this->session->get('user_id');
         $unDispatchedMails = ReceiveMail::find([
             'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
-            'bind' => [1 => 0, 2 => $this->session->get('user_id')],
+            'bind' => [1 => 0, 2 => $uid],
             'column' => 'id, fromAddress, subject, receiveDate'
         ]);
         if($unDispatchedMails->getFirst() == null)
@@ -36,9 +38,11 @@ class DispatcherController extends Base{
      */
     public function GetDispatchedAction()
     {
+        $uid = $this->request->get('uid');
+        //$uid = $this->session->get('user_id');
         $dispatchedMails = ReceiveMail::find([
             'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
-            'bind' => [1 => 1, 2 => $this->session->get('user_id')],
+            'bind' => [1 => 1, 2 => $uid],
             'column' => 'id, fromAddress, subject, receiveDate'
         ]);
         if($dispatchedMails->getFirst() == null)
@@ -63,9 +67,11 @@ class DispatcherController extends Base{
      */
     public function GetUnSeenAction()
     {
+        $uid = $this->request->get('uid');
+        //$uid = $this->session->get('user_id');
         $unSeenMails = ReceiveMail::find([
             'conditions' => 'isSeen=?1 AND dispatcher_id=?2',
-            'bind' => [1 => 0, 2 => $this->session->get('user_id')],
+            'bind' => [1 => 0, 2 => $uid],
             'column' => 'id, fromAddress, subject'
         ]);
         $mailList = array();
@@ -120,7 +126,7 @@ class DispatcherController extends Base{
         }
         else
         {
-            $this->response->setJsonContent(['id' => $receiveMail->id, 'subject' => $receiveMail->subject, 'body' => $receiveMail->body, 'fromAddress' => $receiveMail->fromAddress, 'receiveDate' => $receiveMail->receiveDate, 'isAnswered' => $receiveMail->isAnswered, 'isSeen' => $receiveMail->isSeen, 'isDispatched' => $receiveMail->isDispatched, 'handler_id' => $receiveMail->handler_id, 'isHandled' => $receiveMail->isHandled, 'tags' => $receiveMail->tags]);
+            $this->response->setJsonContent(['id' => $receiveMail->id, 'subject' => $receiveMail['subject'], 'body' => base64_decode($receiveMail['body']), 'fromAddress' => $receiveMail['fromAddress'], 'receiveDate' => $receiveMail['receiveDate'], 'isAnswered' => $receiveMail['isAnswered'], 'isSeen' => $receiveMail['isSeen'], 'isDispatched' => $receiveMail['isDispatched'], 'handler_id' => $receiveMail['handler_id'], 'isHandled' => $receiveMail['isHandled'], 'tags' => $receiveMail['tags']]);
         }
         $this->response->send();
         return;
