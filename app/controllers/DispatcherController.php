@@ -172,8 +172,16 @@ class DispatcherController extends Base{
                 $email->dispatcher_id = $dispatcher_id;
                 $email->save();
             }
-            catch(Exceptions $e)
+            catch(Exception $e)
             {}
         }
+    }
+
+    /**
+     * @Route("/tag", methods = {"PUT", "OPTIONS"})
+     */
+    public function TagAction()
+    {
+        //前台已通过update实现
     }
 }
