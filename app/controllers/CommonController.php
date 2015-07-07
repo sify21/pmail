@@ -98,4 +98,41 @@ class CommonController extends Base{
         $this->response->send();
         return;
     }
+
+    /**
+     * @Route("/getEmail", methods = {"GET", "OPTIONS"})
+     */
+    public function GetEmailAction()
+    {
+        $id = $this->request->get('id');
+        $mail = ReceiveMail::findFirst([
+            'conditions' => 'id=?1',
+            'bind' => [1 => $id]
+        ]);
+        if($mail == null)
+        {
+            $this->response->setJsonContent(['message' => '邮件不存在']);
+        }
+        else
+        {
+            $id = $mail->id;
+            $mail_id = base64_decode( $mail->mail_id );
+            $subject = base64_decode( $mail->subject );
+            $body = base64_decode( $mail->body );
+            $fromAddress = $mail->fromAddress;
+            $receiveDate = $mail->receiveDate;
+            $isAnswered = $mail->isAnswered;
+            $isSeen = $mail->isSeen;
+            $dispatcher_id = $mail->dispatcher_id;
+            $isDispatched = $mail->isDispatched;
+            $handler_id = $mail->handler_id;
+            $isHandled = $mail->isHandled;
+            $tags = $mail->tags;
+            $this->response->setJsonContent(['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'body' => $body, 'fromAddress' => $fromAddress,
+                'receiveDate' => $receiveDate, 'isAnswered' => $isAnswered, 'isSeen' => $isSeen, 'dispatcher_id' => $dispatcher_id,
+                'isDispatched' => $isDispatched, 'handler_id' => $handler_id, 'isHandled' => $isHandled, 'tags' => $tags]);
+        }
+        $this->response->send();
+        return;
+    }
 }
