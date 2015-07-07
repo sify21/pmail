@@ -4,5 +4,4 @@ app/config/config.ini
 app/vendor
 app/config/email.json
 app/crontab/auto_get_mails.php
-app/crontab/mailBody
 .directory
