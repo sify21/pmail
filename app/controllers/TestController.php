@@ -22,14 +22,28 @@
 
             //163
             //163第一连接会提示，到邮箱中点安全提醒邮件以开启支持
-            $mailbox = new PhpImap\Mailbox('{imap.163.com:993/imap/ssl}INBOX', 'softpioneers@163.com', 'npcxcizgalswoafa');
+            $mailbox = new PhpImap\Mailbox('{imap.163.com:993/imap/ssl}INBOX', 'softpioneers@163.com', 'npcxcizgalswoafa','/home/sify/文档/localhost');
 
-            $mailsIds = $mailbox->searchMailBox('ALL');
+            $mailsIds = $mailbox->searchMailBox('UNSEEN');
             foreach($mailsIds as $id)
             {
                 $mail = $mailbox->getMail($id);
                 $mailbox->markMailAsRead($id);
-                echo ' subject: ' . $mail->subject . ' text: ' . $mail->textPlain;
+//                preg_match_all('/^cid:(.*?\\$163\\.com$)/', $mail->textHtml, $matches);
+//                print_r($matches);
+//                $combine = array_combine($matches[1], $matches[0]);
+                $attachments = $mail->getAttachments();
+                $body = $mail->textHtml;
+                foreach ($attachments as $attach)
+                {
+                    $cid ='cid:'.$attach->id;
+                    $fileName = basename($attach->filePath);
+                    $a[] = ['cid' => $cid, 'filePath' => $fileName];
+                    $body = str_replace($cid,'http://localhost/'.$fileName, $body);
+                }
+                $this->response->setJsonContent(['id' => $id, 'mail_id' => $mail->id]);
+                $this->response->send();
+                return;
             }
         }
 
@@ -51,7 +65,17 @@
             //date
 //            echo date('YmdHis');//实际时间
 //            echo round(microtime(true) * 1000);//1970 1月1号至今的毫秒数
-            $this->response->setJsonContent(['hehe' => 'hehe', 'user_id' => $this->session->get('user_id')]);
+
+            //email body
+            $this->view->enable();
+            $mail_id = $this->request->get('id');
+            $mail = ReceiveMail::findFirst([
+                'conditions' => 'id=?1',
+                'bind' => [1 =>$mail_id]
+            ]);
+            $body = base64_decode($mail->body);
+            $this->response->setContentType('text/html','utf-8');
+            $this->response->setContent($body);
             $this->response->send();
             return;
         }
