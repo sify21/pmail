@@ -22,7 +22,7 @@ class AdminController extends Base
         $password = $info->password;
         $passwordConfirmation = $info->passwordConfirmation;
         $role = $info->role;
-        $user=Users::findFirst([
+        $user=User::findFirst([
             'conditions' => 'name=?1',
             'bind' => [1 => $name]
         ]);
@@ -42,7 +42,7 @@ class AdminController extends Base
         {
             try
             {
-                $user=new Users();
+                $user=new User();
                 $user->name = $name;
                 $user->password = $password;
                 $user->role = $role;
@@ -136,7 +136,7 @@ class AdminController extends Base
         {
             $limit = 10;
         }
-        $users = Users::find([
+        $users = User::find([
             'conditions' => 'role=?1',
             'bind' => [1 => $role],
             'columns' => 'id, name, role, created_at',
@@ -165,7 +165,7 @@ class AdminController extends Base
             $this->response->send();
             return;
         }
-        $user = Users::findFirst([
+        $user = User::findFirst([
             'conditions' => 'id=?1',
             'bind' => [1 => $info->id]
         ]);
@@ -179,7 +179,7 @@ class AdminController extends Base
         $user_array = $user->toArray();
         if($method == 'GET')
         {
-            $inheritors = Users::find([
+            $inheritors = User::find([
                 'conditions' => 'role=?1',
                 'bind' => [1 => $user_array['role']]
             ]);

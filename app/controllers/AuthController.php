@@ -20,7 +20,7 @@ class AuthController extends Base
         }
         $username = $info->username;
         $password = $info->password;
-        $user=Users::findFirst([
+        $user=User::findFirst([
             'conditions' => 'name=?1',
             'bind' => [1 => $username]
         ]);

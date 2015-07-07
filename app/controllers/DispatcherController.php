@@ -104,7 +104,7 @@ class DispatcherController extends Base{
      */
     public function GetHandlerListAction()
     {
-        $handlers = Users::find([
+        $handlers = User::find([
             'conditions' => 'role=?1',
             'bind' => [1 => 'handler']
         ]);
@@ -145,11 +145,11 @@ class DispatcherController extends Base{
             'conditions' => 'id=?1',
             'bind' => [1 => $email_id]
         ]);
-        $dispatcher = Users::findFirst([
+        $dispatcher = User::findFirst([
             'conditions' => 'id=?1',
             'bind' => [1 => $dispatcher_id]
         ]);
-        $handler = Users::findFirst([
+        $handler = User::findFirst([
             'conditions' => 'id=?1',
             'bind' => [1 => $handler_id]
         ]);

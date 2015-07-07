@@ -93,7 +93,7 @@ class HandlerController extends Base{
      */
     public function GetAssessorListAction()
     {
-        $assessors = Users::find([
+        $assessors = User::find([
             'conditions' => 'role=?1',
             'bind' => [1 => 'assessor']
         ]);
