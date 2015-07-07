@@ -6,51 +6,73 @@
  * Date: 15-7-4
  * Time: 下午4:44
  */
-require __DIR__.'/../vendor/autoload.php';
-$filePath = __DIR__.'/../config/email.json';
-$jsonString = file_get_contents($filePath);
-$jsonObj = json_decode($jsonString);
-$mailBox = new PhpImap\Mailbox("{{$jsonObj->imap_address}:993/imap/ssl}INBOX", $jsonObj->email_address, $jsonObj->password);
-$mailIds = $mailBox->searchMailbox('UNSEEN');
+try
+{
+    require __DIR__.'/../vendor/autoload.php';
+    $filePath = __DIR__.'/../config/email.json';
+    $jsonString = file_get_contents($filePath);
+    $jsonObj = json_decode($jsonString);
+    $attachments_Dir = '/home/文档/localhost';
+    $attachments_Uri = 'http://localhost/';
+    $mailBox = new PhpImap\Mailbox("{{$jsonObj->imap_address}:993/imap/ssl}INBOX", $jsonObj->email_address, $jsonObj->password, $attachments_Dir);
+    $mailIds = $mailBox->searchMailbox('UNSEEN');
 //若没有新邮件则直接退出
-if(!$mailIds)
-{
-//    system('echo 0 > 0.txt');
-    exit;
-}
-//else
-//{
-//    $count = count($mailIds);
-//    system("echo {$count} > 1.txt");
-//}
-$con = mysql_connect('localhost:3306', 'username', 'password');
-mysql_select_db('dbname', $con);
-if(!$con)
-{
-    //system('echo 0 > 0.txt');
-    exit;
-}
-foreach($mailIds as $mailId)
-{
-    $mail = $mailBox->getMail($mailId);
-    $mailBox->markMailAsRead($mailId);
-    $subject = $mail->subject;
-    $body = $mail->textPlain;
-    $fromAddress = $mail->fromAddress;
-    $receiveDate = $mail->date;
-
-    //system("echo {$body} > 2.txt");
-
-    $result = mysql_query("SELECT id FROM users WHERE role='dispatcher'");
-    $dispatcher_ids = array();
-    while($row = mysql_fetch_array($result))
+    if(!$mailIds)
     {
-        $dispatcher_ids[] = $row['id'];
+        exit;
     }
-    $dispatcher_id = $dispatcher_ids[ array_rand($dispatcher_ids) ];
-    mysql_query("INSERT INTO receiveMail (subject, body, fromAddress, receiveDate, dispatcher_id)
-                VALUES ('{$subject}', '{$body}', '{$fromAddress}', '{$receiveDate}', '{$dispatcher_id}')");
+    $con = mysql_connect('localhost:3306', yourname, yourpassword);
+    mysql_select_db(yourdbname, $con);
+    if(!$con)
+    {
+        exit;
+    }
+    foreach($mailIds as $mailId)
+    {
+        $mail = $mailBox->getMail($mailId);
+        $mailBox->markMailAsRead($mailId);
+        $attachments = $mail->getAttachments();
+        $mail_id = base64_encode( $mail->id );
+        $subject = base64_encode( $mail->subject );
+        $body = $mail->textHtml;
+        //将 body中的cid:{$attachment->id}  替换成 ‘www.sify21.com:8001’+ $attachments->filePath 截掉 '/home/pmail')
+        //不需要用正则表达式，因为path和id中有$会被php看成是变量，所以自己写很头痛，但直接用变量来操作字符串，内部就只会把$看成是普通字符；是内部字符串处理程序与编程人员自己写的字符串的一种转换很头疼
+        foreach ($attachments as $attach)
+        {
+            $cid ='cid:'.$attach->id;
+            $fileName = basename($attach->filePath);
+            $body = str_replace($cid, $attachments_Uri.$fileName, $body);
+        }
+        $body = base64_encode( $body );
+        $fromAddress = $mail->fromAddress;
+        $receiveDate = $mail->date;
+
+        //邮件存入数据库
+        $result = mysql_query("SELECT id FROM users WHERE role='dispatcher'");
+        $dispatcher_ids = array();
+        while($row = mysql_fetch_array($result))
+        {
+            $dispatcher_ids[] = $row['id'];
+        }
+        $dispatcher_id = $dispatcher_ids[ array_rand($dispatcher_ids) ];
+        //email主体入库
+        mysql_query("INSERT INTO receiveMail (mail_id, subject, body, fromAddress, receiveDate, dispatcher_id)
+                VALUES ('$mail_id', '{$subject}', '{$body}', '{$fromAddress}', '{$receiveDate}', '{$dispatcher_id}')");
+        //attachments入库
+        foreach ($attachments as $attachment)
+        {
+            $attachment_id = base64_encode( $attachment->id );
+            $attachment_name = base64_encode( $attachment->name );
+            $file_name = base64_encode( basename($attachment->filePath) );
+            mysql_query("INSERT INTO attachments (mail_id, attachment_id, attachment_name, file_name)
+                VALUES ('{$mail_id}', '{$attachment_id}', '{$attachment_name}', '$file_name'");
+        }
+    }
+    mysql_close($con);
+    exit;
 }
-mysql_close($con);
-//system('echo 5 > 5.txt');
-exit;
+catch (Exception $e)
+{
+    $info = $e->getMessage();
+    system("echo '{$info}' > exception.txt");
+}
