@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>网易邮箱</title>
+
+</head>
+<body>
+<div style="line-height:1.7;color:#000000;font-size:14px;font-family:Arial"><div><img data-image="1" orgheight="493" orgwidth="500" src="cid:20950454$3$14e5d89f571$Coremail$softpioneers$163.com" style="width: 500px; height: 493px;"><br>上面是第一张图<br><img data-image="1" orgheight="300" orgwidth="300" src="cid:174f3782$4$14e5d89f571$Coremail$softpioneers$163.com" style="width: 300px; height: 300px;"><br>上面是第二张图<br></div></div><br><br><span title="neteasefooter"><span id="netease_mail_footer"></span></span>
+<style type="text/css">
+.netease-attDown{ width:430px;height:auto;background-color:#F6F9FC;border:#C5D2DA 1px solid;padding:12px;line-height:160%;font-size:12px;white-space:nowrap;font-family:Verdana}
+.netease-attDown-tit{ color:#A0A0A0 }
+.netease-attDown-tit strong{ color:#008000 }
+.netease-attDown a{ color:#0669B2}
+.netease-attDown dl,
+.netease-attDown dt,
+.netease-attDown dd{ margin:0;padding:0;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.netease-attDown dt{ font-weight:bold;color:#333;margin-top:8px}
+.netease-attDown dt .info{ color:#999;font-weight:normal}
+.netease-notice{padding-bottom:5px; white-space:normal}
+</style>
+
+<div class="netease-attDown">
+	<div class="netease-notice"><img src="http://mimg.127.net/xm/all/attpreview/img/ico_notice.gif" alt="提示图标" style="vertical-align:middle" /> 邮件带有附件预览链接，若您转发或回复此邮件时不希望对方预览附件，建议您手动删除链接。</div>
+	<div class="netease-attDown-tit">共有 <strong>2</strong> 个附件</div>
+	
+		<dl>
+			<dt title="s5830i相机静音.txt">s5830i相机静音.txt<span class="info">(1K)</span></dt>
+			<dd>
+				<a href="http://preview.mail.163.com/xdownload?filename=s5830i%E7%9B%B8%E6%9C%BA%E9%9D%99%E9%9F%B3.txt&mid=1tbitBAukVSIJn7CzQAAsQ&part=5&sign=e0f6cb785c3b1638620bc576f15dc09a&time=1436204223&uid=softpioneers%40163.com" target="_blank">极速下载</a>
+				<a href="http://preview.mail.163.com/preview?mid=1tbitBAukVSIJn7CzQAAsQ&part=5&sign=e0f6cb785c3b1638620bc576f15dc09a&time=1436204223&uid=softpioneers%40163.com" target="_blank">在线预览</a>
+			</dd>
+		</dl>
+	
+		<dl>
+			<dt title="windows开启wifi.txt">windows开启wifi.txt<span class="info">(2K)</span></dt>
+			<dd>
+				<a href="http://preview.mail.163.com/xdownload?filename=windows%E5%BC%80%E5%90%AFwifi.txt&mid=1tbitBAukVSIJn7CzQAAsQ&part=6&sign=e0f6cb785c3b1638620bc576f15dc09a&time=1436204223&uid=softpioneers%40163.com" target="_blank">极速下载</a>
+				<a href="http://preview.mail.163.com/preview?mid=1tbitBAukVSIJn7CzQAAsQ&part=6&sign=e0f6cb785c3b1638620bc576f15dc09a&time=1436204223&uid=softpioneers%40163.com" target="_blank">在线预览</a>
+			</dd>
+		</dl>
+	
+</div>
+</body>
+</html>
+
