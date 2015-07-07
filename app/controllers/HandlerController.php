@@ -14,7 +14,7 @@ class HandlerController extends Base{
         $unHandledMails = ReceiveMail::find([
             'conditions' => 'isHandled=?1 AND handler_id=?2',
             'bind' => [1 => 0, 2 => $uid],
-            'column' => 'id, fromAddress, subject, receiveDate'
+            'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
         if($unHandledMails->getFirst() == null)
         {
@@ -23,9 +23,14 @@ class HandlerController extends Base{
         else
         {
             $mailList = array();
-            foreach($unHandledMails as $unHandledMail)
+            foreach($unHandledMails as $mail)
             {
-                $mailList[] = ['id' => "{$unHandledMail->id}", 'fromAddress' => $unHandledMail->fromAddress, 'subject' => $unHandledMail->subject, 'receiveDate' => $unHandledMail->receiveDate];
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $fromAddress = $mail->fromAddress;
+                $subject = base64_decode( $mail->subject );
+                $receiveDate = $mail->receiveDate;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -43,7 +48,7 @@ class HandlerController extends Base{
         $handledMails = ReceiveMail::find([
             'conditions' => 'isHandled=?1 AND handler_id=?2',
             'bind' => [1 => 1, 2 => $uid],
-            'column' => 'id, fromAddress, subject, receiveDate'
+            'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
         if($handledMails->getFirst() == null)
         {
@@ -52,9 +57,14 @@ class HandlerController extends Base{
         else
         {
             $mailList = array();
-            foreach($handledMails as $handledMail)
+            foreach($handledMails as $mail)
             {
-                $mailList[] = ['id' => $handledMail->id, 'fromAddress' => $handledMail->fromAddress, 'subject' => $handledMail->subject, 'receiveDate' => $handledMail->receiveDate];
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $fromAddress = $mail->fromAddress;
+                $subject = base64_decode( $mail->subject );
+                $receiveDate = $mail->receiveDate;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }

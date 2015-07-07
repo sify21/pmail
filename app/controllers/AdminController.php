@@ -40,13 +40,20 @@ class AdminController extends Base
         }
         else
         {
-            $user=new Users();
-            $user->name = $name;
-            $user->password = $password;
-            $user->role = $role;
-            $user->created_at = round(microtime(true) * 1000);
-            $this->response->setJsonContent(['name' => $user->name, 'password' => $user->password, 'role' => $user->role, 'created_at' => $user->created_at]);
-            $user->save();
+            try
+            {
+                $user=new Users();
+                $user->name = $name;
+                $user->password = $password;
+                $user->role = $role;
+                $user->created_at = round(microtime(true) * 1000);
+                $this->response->setJsonContent(['name' => $user->name, 'password' => $user->password, 'role' => $user->role, 'created_at' => $user->created_at]);
+                $user->save();
+            }
+            catch(Exception $e)
+            {
+                $this->response->setJsonContent(['message' => $e->getMessage()]);
+            }
         }
         $this->response->send();
         return;
@@ -57,10 +64,17 @@ class AdminController extends Base
      */
     public function GetEmailConfAction()
     {
-        $filePath = __DIR__.'/../config/email.json';
-        $jsonString = file_get_contents($filePath);
-        $jsonObj = json_decode($jsonString);
-        $this->response->setJsonContent($jsonObj);
+        try
+        {
+            $filePath = __DIR__.'/../config/email.json';
+            $jsonString = file_get_contents($filePath);
+            $jsonObj = json_decode($jsonString);
+            $this->response->setJsonContent($jsonObj);
+        }
+        catch(Exception $e)
+        {
+            $this->response->setJsonContent(['message' => $e->getMessage()]);
+        }
         $this->response->send();
         return;
     }
@@ -126,7 +140,7 @@ class AdminController extends Base
             'conditions' => 'role=?1',
             'bind' => [1 => $role],
             'columns' => 'id, name, role, created_at',
-            'order' => 'id ASC',
+            'order' => 'role ASC',
             'limit' => ['number' => $limit, 'offset' => $offset]
         ]);
         $return = array();
@@ -162,11 +176,12 @@ class AdminController extends Base
             return;
         }
         $method = $this->request->getMethod();
+        $user_array = $user->toArray();
         if($method == 'GET')
         {
             $inheritors = Users::find([
                 'conditions' => 'role=?1',
-                'bind' => [1 => $user->role]
+                'bind' => [1 => $user_array['role']]
             ]);
             if($inheritors->getFirst() == null)
             {
@@ -183,7 +198,6 @@ class AdminController extends Base
         }
         elseif($method == 'DELETE')
         {
-            $role = $user['role'];
             if(!isset($info->inheritor_id))
             {
                 $this->response->setJsonContent(['message' => 'No Inheritor_id']);
@@ -198,18 +212,18 @@ class AdminController extends Base
             }
             else
             {
-                if($role == 'dispatcher')
+                if($user_array['role'] == 'dispatcher')
                 {
                     $receiveMail = ReceiveMail::find([
                         'conditions' => 'dispatcher_id=?1',
                         'bind' => [1 => $info->user_id]
                     ]);
                     foreach ($receiveMail as $mail) {
-                        $mail['dispatcher_id'] = $info->inheritor_id;
+                        $mail->dispatcher_id = $info->inheritor_id;
                         $mail->save();
                     }
                 }
-                elseif($role == 'handler')
+                elseif($user_array['role'] == 'handler')
                 {
                     $receiveMail = ReceiveMail::find([
                         'conditions' => 'handler_id=?1',
@@ -220,15 +234,15 @@ class AdminController extends Base
                         'bind' => [1 => $info->user_id]
                     ]);
                     foreach ($receiveMail as $mail) {
-                        $mail['handler_id'] = $info->inheritor_id;
+                        $mail->handler_id = $info->inheritor_id;
                         $mail->save();
                     }
                     foreach ($replyMail as $mail) {
-                        $mail['handler_id'] = $info->inheritor_id;
+                        $mail->handler_id = $info->inheritor_id;
                         $mail->save();
                     }
                 }
-                elseif($role == 'assessor')
+                elseif($user_array['role'] == 'assessor')
                 {
                     $replyMail = ReplyMail::find([
                         'conditions' => 'assessor_id=?1',

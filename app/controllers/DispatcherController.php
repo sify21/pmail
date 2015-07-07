@@ -14,7 +14,7 @@ class DispatcherController extends Base{
         $unDispatchedMails = ReceiveMail::find([
             'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
             'bind' => [1 => 0, 2 => $uid],
-            'column' => 'id, fromAddress, subject, receiveDate'
+            'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
         if($unDispatchedMails->getFirst() == null)
         {
@@ -23,9 +23,14 @@ class DispatcherController extends Base{
         else
         {
             $mailList = array();
-            foreach($unDispatchedMails as $unDispatchedMail)
+            foreach($unDispatchedMails as $mail)
             {
-                $mailList[] = ['id' => "{$unDispatchedMail->id}", 'fromAddress' => $unDispatchedMail->fromAddress, 'subject' => $unDispatchedMail->subject, 'receiveDate' => $unDispatchedMail->receiveDate];
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $fromAddress = $mail->fromAddress;
+                $subject = base64_decode( $mail->subject );
+                $receiveDate = $mail->receiveDate;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -43,7 +48,7 @@ class DispatcherController extends Base{
         $dispatchedMails = ReceiveMail::find([
             'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
             'bind' => [1 => 1, 2 => $uid],
-            'column' => 'id, fromAddress, subject, receiveDate'
+            'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
         if($dispatchedMails->getFirst() == null)
         {
@@ -52,9 +57,14 @@ class DispatcherController extends Base{
         else
         {
             $mailList = array();
-            foreach($dispatchedMails as $dispatchedMail)
+            foreach($dispatchedMails as $mail)
             {
-                $mailList[] = ['id' => $dispatchedMail->id, 'fromAddress' => $dispatchedMail->fromAddress, 'subject' => $dispatchedMail->subject, 'receiveDate' => $dispatchedMail->receiveDate];
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $fromAddress = $mail->fromAddress;
+                $subject = base64_decode( $mail->subject );
+                $receiveDate = $mail->receiveDate;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -72,12 +82,17 @@ class DispatcherController extends Base{
         $unSeenMails = ReceiveMail::find([
             'conditions' => 'isSeen=?1 AND dispatcher_id=?2',
             'bind' => [1 => 0, 2 => $uid],
-            'column' => 'id, fromAddress, subject'
+            'column' => 'id, mail_id, fromAddress, subject'
         ]);
         $mailList = array();
-        foreach($unSeenMails as $unSeenMail)
+        foreach($unSeenMails as $mail)
         {
-            $mailList[] = ['id' => $unSeenMail->id, 'fromAddress' => $unSeenMail->fromAddress, 'subject' => $unSeenMail->subject];
+            $id = $mail->id;
+            $mail_id = base64_decode( $mail->mail_id );
+            $fromAddress = $mail->fromAddress;
+            $subject = base64_decode( $mail->subject );
+            $receiveDate = $mail->receiveDate;
+            $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
         }
         $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         $this->response->send();
@@ -116,17 +131,32 @@ class DispatcherController extends Base{
     public function GetEmailAction()
     {
         $id = $this->request->get('id');
-        $receiveMail = ReceiveMail::findFirst([
+        $mail = ReceiveMail::findFirst([
             'conditions' => 'id=?1',
             'bind' => [1 => $id]
         ]);
-        if($receiveMail == null)
+        if($mail == null)
         {
             $this->response->setJsonContent(['message' => '邮件不存在']);
         }
         else
         {
-            $this->response->setJsonContent(['id' => $receiveMail->id, 'subject' => $receiveMail['subject'], 'body' => base64_decode($receiveMail['body']), 'fromAddress' => $receiveMail['fromAddress'], 'receiveDate' => $receiveMail['receiveDate'], 'isAnswered' => $receiveMail['isAnswered'], 'isSeen' => $receiveMail['isSeen'], 'isDispatched' => $receiveMail['isDispatched'], 'handler_id' => $receiveMail['handler_id'], 'isHandled' => $receiveMail['isHandled'], 'tags' => $receiveMail['tags']]);
+            $id = $mail->id;
+            $mail_id = base64_decode( $mail->mail_id );
+            $subject = base64_decode( $mail->subject );
+            $body = base64_decode( $mail->body );
+            $fromAddress = $mail->fromAddress;
+            $receiveDate = $mail->receiveDate;
+            $isAnswered = $mail->isAnswered;
+            $isSeen = $mail->isSeen;
+            $dispatcher_id = $mail->dispatcher_id;
+            $isDispatched = $mail->isDispatched;
+            $handler_id = $mail->handler_id;
+            $isHandled = $mail->isHandled;
+            $tags = $mail->tags;
+            $this->response->setJsonContent(['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'body' => $body, 'fromAddress' => $fromAddress,
+                'receiveDate' => $receiveDate, 'isAnswered' => $isAnswered, 'isSeen' => $isSeen, 'dispatcher_id' => $dispatcher_id,
+                'isDispatched' => $isDispatched, 'handler_id' => $handler_id, 'isHandled' => $isHandled, 'tags' => $tags]);
         }
         $this->response->send();
         return;
@@ -135,7 +165,7 @@ class DispatcherController extends Base{
     /**
      * 这个功能前台直接调用update完成了
      * @@Route("/dispatch", methods = {"PUT", "OPTIONS"})
-     */
+     *
     public function dispatchAction()
     {
         $info = $this->request->getJsonRawBody();
@@ -178,13 +208,14 @@ class DispatcherController extends Base{
             catch(Exception $e)
             {}
         }
-    }
+    }*/
 
     /**
      * @Route("/tag", methods = {"PUT", "OPTIONS"})
-     */
+     *
     public function TagAction()
     {
         //前台已通过update实现
-    }
+    }*/
+
 }
