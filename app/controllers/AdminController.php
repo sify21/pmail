@@ -164,20 +164,81 @@ class AdminController extends Base
         $method = $this->request->getMethod();
         if($method == 'GET')
         {
-
+            $inheritors = Users::find([
+                'conditions' => 'role=?1',
+                'bind' => [1 => $user->role]
+            ]);
+            if($inheritors->getFirst() == null)
+            {
+                $this->response->setJsonContent(['message' => '该成员无法替代!']);
+            }
+            else
+            {
+                $inheritorList = array();
+                foreach ($inheritors as $inheritor) {
+                    $inheritorList[] = ['id' => $inheritor->id, 'role' => $inheritor->role, 'username' => $inheritor->name, 'created_at' => $inheritor->created_at];
+                }
+                $this->response->setJsonContent(['inheritorList' => $inheritorList]);
+            }
         }
         elseif($method == 'DELETE')
         {
-            if($user->delete() == false)
+            $role = $user['role'];
+            if(!isset($info->inheritor_id))
+            {
+                $this->response->setJsonContent(['message' => 'No Inheritor_id']);
+            }
+            elseif($user->delete() == false)
             {
                 $messages = "Delete Error:<br/>";
                 foreach ($user->getMessages() as $message) {
                     $messages = $messages.$message."<br/>";
                 }
-                $this->response->setJsonContent(['message' => $message]);
+                $this->response->setJsonContent(['message' => $messages]);
             }
             else
             {
+                if($role == 'dispatcher')
+                {
+                    $receiveMail = ReceiveMail::find([
+                        'conditions' => 'dispatcher_id=?1',
+                        'bind' => [1 => $info->user_id]
+                    ]);
+                    foreach ($receiveMail as $mail) {
+                        $mail['dispatcher_id'] = $info->inheritor_id;
+                        $mail->save();
+                    }
+                }
+                elseif($role == 'handler')
+                {
+                    $receiveMail = ReceiveMail::find([
+                        'conditions' => 'handler_id=?1',
+                        'bind' => [1 => $info->user_id]
+                    ]);
+                    $replyMail = ReplyMail::find([
+                        'conditions' => 'handler_id=?1',
+                        'bind' => [1 => $info->user_id]
+                    ]);
+                    foreach ($receiveMail as $mail) {
+                        $mail['handler_id'] = $info->inheritor_id;
+                        $mail->save();
+                    }
+                    foreach ($replyMail as $mail) {
+                        $mail['handler_id'] = $info->inheritor_id;
+                        $mail->save();
+                    }
+                }
+                elseif($role == 'assessor')
+                {
+                    $replyMail = ReplyMail::find([
+                        'conditions' => 'assessor_id=?1',
+                        'bind' => [1 => $info->user_id]
+                    ]);
+                    foreach ($replyMail as $mail) {
+                        $mail['assessor_id'] = $info->inheritor_id;
+                        $mail->save();
+                    }
+                }
                 $this->response->setJsonContent(['message' => 'Success!']);
             }
         }
