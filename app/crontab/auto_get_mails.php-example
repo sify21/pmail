@@ -12,8 +12,11 @@ try
     $filePath = __DIR__.'/../config/email.json';
     $jsonString = file_get_contents($filePath);
     $jsonObj = json_decode($jsonString);
-    $attachments_Dir = '/home/文档/localhost';
+    $attachments_Dir = '/home/';
     $attachments_Uri = 'http://localhost/';
+    $db_name = '';
+    $db_username = '';
+    $db_password = '';
     $mailBox = new PhpImap\Mailbox("{{$jsonObj->imap_address}:993/imap/ssl}INBOX", $jsonObj->email_address, $jsonObj->password, $attachments_Dir);
     $mailIds = $mailBox->searchMailbox('UNSEEN');
 //若没有新邮件则直接退出
@@ -21,8 +24,8 @@ try
     {
         exit;
     }
-    $con = mysql_connect('localhost:3306', yourname, yourpassword);
-    mysql_select_db(yourdbname, $con);
+    $con = mysql_connect('localhost:3306', $db_username, $db_password);
+    mysql_select_db($db_name, $con);
     if(!$con)
     {
         exit;
@@ -48,7 +51,7 @@ try
         $receiveDate = $mail->date;
 
         //邮件存入数据库
-        $result = mysql_query("SELECT id FROM users WHERE role='dispatcher'");
+        $result = mysql_query("SELECT id FROM `user` WHERE role='dispatcher'");
         $dispatcher_ids = array();
         while($row = mysql_fetch_array($result))
         {
@@ -64,8 +67,8 @@ try
             $attachment_id = base64_encode( $attachment->id );
             $attachment_name = base64_encode( $attachment->name );
             $file_name = base64_encode( basename($attachment->filePath) );
-            mysql_query("INSERT INTO attachments (mail_id, attachment_id, attachment_name, file_name)
-                VALUES ('{$mail_id}', '{$attachment_id}', '{$attachment_name}', '$file_name'");
+            mysql_query("INSERT INTO attachment (mail_id, attachment_id, attachment_name, file_name)
+                VALUES ('{$mail_id}', '{$attachment_id}', '{$attachment_name}', '{$file_name}')");
         }
     }
     mysql_close($con);
