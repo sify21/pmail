@@ -85,36 +85,33 @@ class AdminController extends Base
     public function ConfEmailAction()
     {
         $info = $this->request->getJsonRawBody();
-        if(!isset($info->email_address)||!isset($info->imap_address)||!isset($info->password)||!isset($info->passwordConfirmation))
+        if(isset($info->email_address)) $email_address = $info->email_address;
+        if(isset($info->imap_address)) $imap_address = $info->imap_address;
+        if(isset($info->password))
         {
-            $this->response->setJsonContent(['message' => 'No Data!']);
-            $this->response->send();
-            return;
+            $password = $info->password;
+            $passwordConfirmation = $info->passwordConfirmation;
+            if($password != $passwordConfirmation)
+            {
+                $this->response->setJsonContent(['message' => '两次密码不一致']);
+                $this->response->send();
+                return;
+            }
         }
-        $email_address = $info->email_address;
-        $imap_address = $info->imap_address;
-        $password = $info->password;
-        $passwordConfirmation = $info->passwordConfirmation;
+        if(isset($info->compay_name)) $company_name = $info->company_name;
         $updated_at = round(microtime(true) * 1000);
-        if($password != $passwordConfirmation)
+        try
         {
-            $this->response->setJsonContent(['message' => '两次密码不一致']);
+            $mailbox = new PhpImap\Mailbox("{{$imap_address}:993/imap/ssl}INBOX", $email_address, $password);
+            $mailbox->searchMailbox('ALL');
+            $filePath = __DIR__.'/../config/email.json';
+            $data = "{\"email_address\": \"{$email_address}\", \"imap_address\": \"{$imap_address}\", \"password\": \"{$password}\", \"updated_at\": \"{$updated_at}\"}";
+            file_put_contents($filePath, $data);
+            $this->response->setJsonContent(['email_address' => $email_address, 'imap_address' => $imap_address, 'updated_at' => $updated_at]);
         }
-        else
+        catch (Exception $e)
         {
-            try
-            {
-                $mailbox = new PhpImap\Mailbox("{{$imap_address}:993/imap/ssl}INBOX", $email_address, $password);
-                $mailbox->searchMailbox('ALL');
-                $filePath = __DIR__.'/../config/email.json';
-                $data = "{\"email_address\": \"{$email_address}\", \"imap_address\": \"{$imap_address}\", \"password\": \"{$password}\", \"updated_at\": \"{$updated_at}\"}";
-                file_put_contents($filePath, $data);
-                $this->response->setJsonContent(['email_address' => $email_address, 'imap_address' => $imap_address, 'updated_at' => $updated_at]);
-            }
-            catch (Exception $e)
-            {
-                $this->response->setJsonContent(['message' => $e->getMessage()]);
-            }
+            $this->response->setJsonContent(['message' => $e->getMessage()]);
         }
         $this->response->send();
         return;
@@ -158,8 +155,9 @@ class AdminController extends Base
      */
     public function DeleteUserAction()
     {
+        $uid = $this->request->get('uid');
         $info = $this->request->getJsonRawBody();
-        if(!isset($info->user_id))
+        if($uid == null)
         {
             $this->response->setJsonContent(['message' => 'No Data!']);
             $this->response->send();
