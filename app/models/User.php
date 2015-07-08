@@ -14,13 +14,13 @@ class User extends Phalcon\Mvc\Model
     public $role;
     public $created_at;
     public $default_assessor_id;
-    public function initialize()
+    /*public function initialize()
     {
         $this->hasMany('id', 'ReceiveMail', 'dispatcher_id');
         $this->hasMany('id', 'ReplyMail', 'assessor_id');
         $this->hasMany('id', 'ReplyMail', 'handler_id');
         $this->belongsTo('default_assessor_id', 'User', 'id');
-    }
+    }*/
 
     public function getSource()
     {

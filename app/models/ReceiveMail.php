@@ -20,11 +20,11 @@ class ReceiveMail extends Phalcon\Mvc\Model
     public $status;
     public $dispatcher_id;
     public $handler_id;
-    public function initialize()
+    /*public function initialize()
     {
         $this->belongsTo('dispatcher_id','User','id');
         $this->hasMany('mail_id', 'Attachment', 'mail_id');
-    }
+    }*/
 
     public function getSource()
     {

@@ -23,14 +23,17 @@ class AssessorController extends Base{
         else
         {
             $mailList = array();
-            foreach($unAssessedMails as $unAssessedMail)
+            foreach($unAssessedMails as $mail)
             {
-                $id = $unAssessedMail->id;
-                $mail_id = base64_decode( $unAssessedMail->mail_id );
-                $fromAddress = $unAssessedMail->fromAddress;
-                $subject = base64_decode( $unAssessedMail->subject );
-                $receiveDate = $unAssessedMail->receiveDate;
-                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $subject = base64_decode( $mail->subject );
+                $reply_id = $mail->reply_id;
+                $toWhom = $mail->toWhom;
+                $replyDate = $mail->replyDate;
+                $assessor_id = $mail->assessor_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
+                    'toWhom' => $toWhom, 'replyDate' => $replyDate, 'assessor_id' => $assessor_id];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -57,14 +60,17 @@ class AssessorController extends Base{
         else
         {
             $mailList = array();
-            foreach($assessedMails as $assessedMail)
+            foreach($assessedMails as $mail)
             {
-                $id = $assessedMail->id;
-                $mail_id = base64_decode( $assessedMail->mail_id );
-                $fromAddress = $assessedMail->fromAddress;
-                $subject = base64_decode( $assessedMail->subject );
-                $receiveDate = $assessedMail->receiveDate;
-                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $subject = base64_decode( $mail->subject );
+                $reply_id = $mail->reply_id;
+                $toWhom = $mail->toWhom;
+                $replyDate = $mail->replyDate;
+                $assessor_id = $mail->assessor_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
+                    'toWhom' => $toWhom, 'replyDate' => $replyDate, 'assessor_id' => $assessor_id];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }

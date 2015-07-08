@@ -38,9 +38,18 @@ class CommonController extends Base{
                 if(isset($info->dispatcher_id)) $email->dispatcher_id = $info->dispatcher_id;
                 if(isset($info->handler_id)) $email->handler_id = $info->handler_id;
                 $email->save();
-                $this->response->setJsonContent(['id' => $email->id, 'subject' => $email->subject, 'body' => $email->body,
-                    'fromAddress' => $email->fromAddress, 'receiveDate' => $email->receiveDate, 'tags' => $email->tags,
-                    'status' => $email->status, 'dispatcher_id' => $email->dispatcher_id, 'handler_id' => $email->handler_id] );
+                $id = $email->id;
+                $mail_id = base64_decode( $email->mail_id );
+                $subject = base64_decode( $email->subject );
+                $body = base64_decode( $email->body );
+                $fromAddress = $email->fromAddress;
+                $receiveDate = $email->receiveDate;
+                $tags = $email->tags;
+                $status = $email->status;
+                $dispatcher_id = $email->dispatcher_id;
+                $handler_id = $email->handler_id;
+                $this->response->setJsonContent(['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'body' => $body, 'fromAddress' => $fromAddress,
+                    'receiveDate' => $receiveDate, 'tags' => $tags, 'status' => $status, 'dispatcher_id' => $dispatcher_id, 'handler_id' => $handler_id]);
             }
             catch(Exception $e)
             {
@@ -86,9 +95,19 @@ class CommonController extends Base{
                 if(isset($info->handler_id)) $email->handler_id = $info->handler_id;
                 if(isset($info->assessor_id)) $email->assessor_id = $info->assessor_id;
                 $email->save();
-                $this->response->setJsonContent(['id' => $email->id, 'subject' => $email->subject, 'body' => $email->body, 'reply_id' => $email->reply_id,
-                    'toWhom' => $email->toWhom, 'replyDate' => $email->replyDate, 'assessor_advice' => $email->assessor_advice, 'tags' => $email->tags,
-                    'status' => $email->status, 'dispatcher_id' => $email->dispatcher_id, 'handler_id' => $email->handler_id] );
+                $id = $email->id;
+                $mail_id = base64_decode( $email->mail_id );
+                $subject = base64_decode( $email->subject );
+                $body = base64_decode( $email->body );
+                $reply_id = $email->reply_id;
+                $toWhom = $email->toWhom;
+                $replyDate = $email->replyDate;
+                $assessor_advice = $email->assessor_advice;
+                $status = $email->status;
+                $handler_id = $email->handler_id;
+                $assessor_id = $email->assessor_id;
+                $this->response->setJsonContent(['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'body' => $body, 'reply_id' => $reply_id,'toWhom' => $toWhom,
+                    'replyDate' => $replyDate, 'assessor_advice' => $assessor_advice, 'status' => $status, 'handler_id' => $handler_id, 'assessor_id' => $assessor_id]);
             }
             catch(Exception $e)
             {

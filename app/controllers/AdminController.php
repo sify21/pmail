@@ -155,17 +155,17 @@ class AdminController extends Base
      */
     public function DeleteUserAction()
     {
-        $uid = $this->request->get('uid');
-        $info = $this->request->getJsonRawBody();
-        if($uid == null)
+        $user_id = $this->request->get('user_id');
+        $inheritor_id = $this->request->get('inheritor_id');
+        if($user_id == null)
         {
-            $this->response->setJsonContent(['message' => 'No Data!']);
+            $this->response->setJsonContent(['message' => 'No User_id!']);
             $this->response->send();
             return;
         }
         $user = User::findFirst([
             'conditions' => 'id=?1',
-            'bind' => [1 => $info->id]
+            'bind' => [1 => $user_id]
         ]);
         if($user == null)
         {
@@ -178,8 +178,8 @@ class AdminController extends Base
         if($method == 'GET')
         {
             $inheritors = User::find([
-                'conditions' => 'role=?1',
-                'bind' => [1 => $user_array['role']]
+                'conditions' => 'role=?1 AND id<>?2',
+                'bind' => [1 => $user_array['role'], 2 => $user_id]
             ]);
             if($inheritors->getFirst() == null)
             {
@@ -196,7 +196,7 @@ class AdminController extends Base
         }
         elseif($method == 'DELETE')
         {
-            if(!isset($info->inheritor_id))
+            if($inheritor_id == null)
             {
                 $this->response->setJsonContent(['message' => 'No Inheritor_id']);
             }
@@ -214,10 +214,10 @@ class AdminController extends Base
                 {
                     $receiveMail = ReceiveMail::find([
                         'conditions' => 'dispatcher_id=?1',
-                        'bind' => [1 => $info->user_id]
+                        'bind' => [1 => $user_id]
                     ]);
                     foreach ($receiveMail as $mail) {
-                        $mail->dispatcher_id = $info->inheritor_id;
+                        $mail->dispatcher_id = $inheritor_id;
                         $mail->save();
                     }
                 }
@@ -225,18 +225,18 @@ class AdminController extends Base
                 {
                     $receiveMail = ReceiveMail::find([
                         'conditions' => 'handler_id=?1',
-                        'bind' => [1 => $info->user_id]
+                        'bind' => [1 => $user_id]
                     ]);
                     $replyMail = ReplyMail::find([
                         'conditions' => 'handler_id=?1',
-                        'bind' => [1 => $info->user_id]
+                        'bind' => [1 => $user_id]
                     ]);
                     foreach ($receiveMail as $mail) {
-                        $mail->handler_id = $info->inheritor_id;
+                        $mail->handler_id = $inheritor_id;
                         $mail->save();
                     }
                     foreach ($replyMail as $mail) {
-                        $mail->handler_id = $info->inheritor_id;
+                        $mail->handler_id = $inheritor_id;
                         $mail->save();
                     }
                 }
@@ -244,10 +244,10 @@ class AdminController extends Base
                 {
                     $replyMail = ReplyMail::find([
                         'conditions' => 'assessor_id=?1',
-                        'bind' => [1 => $info->user_id]
+                        'bind' => [1 => $user_id]
                     ]);
                     foreach ($replyMail as $mail) {
-                        $mail['assessor_id'] = $info->inheritor_id;
+                        $mail['assessor_id'] = $inheritor_id;
                         $mail->save();
                     }
                 }

@@ -15,9 +15,9 @@ class User_ReceiveMail extends Phalcon\Mvc\Model
     {
         return 'user_receiveMail';
     }
-    public function initialize()
+    /*public function initialize()
     {
         $this->belongsTo('user_id', 'User', 'id');
         $this->belongsTo('receiveMail_id', 'ReceiveMail', 'id');
-    }
+    }*/
 }

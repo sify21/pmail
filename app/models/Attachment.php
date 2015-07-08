@@ -17,8 +17,8 @@ class Attachment extends Phalcon\Mvc\Model
     {
         return 'attachment';
     }
-    public function initialize()
+    /*public function initialize()
     {
         $this->belongsTo('mail_id', 'ReceiveMail', 'mail_id');
-    }
+    }*/
 }

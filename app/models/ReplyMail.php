@@ -19,11 +19,11 @@ class ReplyMail extends Phalcon\Mvc\Model
     public $status;
     public $handler_id;
     public $assessor_id;
-    public function initialize()
+    /*public function initialize()
     {
         $this->belongsTo('handler_id','User','id');
         $this->belongsTo('assessor_id','User','id');
-    }
+    }*/
 
     public function getSource()
     {
