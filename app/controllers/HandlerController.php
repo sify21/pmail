@@ -12,8 +12,8 @@ class HandlerController extends Base{
         $uid = $this->request->get('uid');
         //$uid = $this->session->get('user_id');
         $unHandledMails = ReceiveMail::find([
-            'conditions' => 'isHandled=?1 AND handler_id=?2',
-            'bind' => [1 => 0, 2 => $uid],
+            'conditions' => 'status=?1 AND handler_id=?2',
+            'bind' => [1 => 1, 2 => $uid],
             'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
         if($unHandledMails->getFirst() == null)
@@ -46,8 +46,8 @@ class HandlerController extends Base{
         $uid = $this->request->get('uid');
         //$uid = $this->session->get('user_id');
         $handledMails = ReceiveMail::find([
-            'conditions' => 'isHandled=?1 AND handler_id=?2',
-            'bind' => [1 => 1, 2 => $uid],
+            'conditions' => 'status=?1 AND handler_id=?2',
+            'bind' => [1 => 2, 2 => $uid],
             'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
         if($handledMails->getFirst() == null)

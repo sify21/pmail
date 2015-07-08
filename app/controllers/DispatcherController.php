@@ -12,7 +12,7 @@ class DispatcherController extends Base{
         $uid = $this->request->get('uid');
         //$uid = $this->session->get('user_id');
         $unDispatchedMails = ReceiveMail::find([
-            'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
+            'conditions' => 'status=?1 AND dispatcher_id=?2',
             'bind' => [1 => 0, 2 => $uid],
             'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
@@ -46,8 +46,8 @@ class DispatcherController extends Base{
         $uid = $this->request->get('uid');
         //$uid = $this->session->get('user_id');
         $dispatchedMails = ReceiveMail::find([
-            'conditions' => 'isDispatched=?1 AND dispatcher_id=?2',
-            'bind' => [1 => 1, 2 => $uid],
+            'conditions' => 'status<>?1 AND dispatcher_id=?2',
+            'bind' => [1 => 0, 2 => $uid],
             'column' => 'id, mail_id, fromAddress, subject, receiveDate'
         ]);
         if($dispatchedMails->getFirst() == null)
