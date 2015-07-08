@@ -14,9 +14,9 @@ class ReceiveMail extends Phalcon\Mvc\Model
     public $mail_id;
     public $subject;
     public $body;
-    public $fromAddress;
-    public $receiveDate;
-    public $tags;
+    public $fromAddress;//(未加密)
+    public $receiveDate;//(未加密)
+    public $tags;//(未加密)
     public $status;
     public $dispatcher_id;
     public $handler_id;
