@@ -31,7 +31,7 @@ try{
             "username" => $config->database->username,
             "password" => $config->database->password,
             "dbname"   => $config->database->dbname,
-            'charset'  => 'UTF8'
+            'charset'  => 'UTF8'//连接数据库时使用的编码；数据库中字段的排序规则与该字段的编码是绑定到一起的
         ));
     });
 
@@ -60,12 +60,28 @@ try{
         return $url;
     });
 
-    //Start the session the first time when some component request the session service
-    $di->setShared('session', function() {
-        $session = new Phalcon\Session\Adapter\Files();
-        $session->start();
-        return $session;
-    });
+//    //跨域的时候后台可以给前台发cookie，但是前台不能把cookie发给后台，所以session用不了;反向代理没有跨域所以可以使用session
+//    //Start the session the first time when some component request the session service
+//    $di->setShared('session', function() {
+//        $session = new Phalcon\Session\Adapter\Files();
+//        $session->start();
+//        return $session;
+//    });
+//
+//    //cookie crypt
+//    $di->set('crypt', function()
+//    {
+//        $crypt = new Phalcon\Crypt();
+//        $crypt->setKey('sify21'); //Use your own key!
+//        return $crypt;
+//    });
+//
+//    //cookie
+//    $di->set("cookies",function()
+//    {
+//        $cookies=new Phalcon\Http\Response\Cookies();
+//        return $cookies;
+//    });
 
     //Setting up volt
     $di->set('volt', function($view, $di) use($config) {
@@ -96,21 +112,6 @@ try{
             'notice'  => 'alert alert-info'
         ));
     });*/
-
-    //cookie crypt
-    $di->set('crypt', function()
-    {
-        $crypt = new Phalcon\Crypt();
-        $crypt->setKey('sify21'); //Use your own key!
-        return $crypt;
-    });
-
-    //cookie
-    $di->set("cookies",function()
-    {
-        $cookies=new Phalcon\Http\Response\Cookies();
-        return $cookies;
-    });
 
     /*//generate html tags through calling functions
     $di->set('tag',function(){
