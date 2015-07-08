@@ -75,17 +75,74 @@ class HandlerController extends Base{
     /**
      * @Route("/getAssessed", methods = {"GET", "OPTIONS"})
      */
-    public function GetAssessedAction()
+    public function GetAssessedAction()//审核已通过/已发送
     {
-
+        $uid = $this->request->get('uid');
+        //$uid = $this->session->get('user_id');
+        $handledMails = ReplyMail::find([
+            'conditions' => 'status=?1 AND handler_id=?2',
+            'bind' => [1 => 0, 2 => $uid],
+            'column' => 'id, mail_id, subject, reply_id,  toWhom, replyDate'
+        ]);
+        if($handledMails->getFirst() == null)
+        {
+            $this->response->setJsonContent(['count' => 0, 'uid' => $this->session->get('user_id')]);
+        }
+        else
+        {
+            $mailList = array();
+            foreach($handledMails as $mail)
+            {
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $subject = base64_decode( $mail->subject );
+                $reply_id = $mail->reply_id;
+                $toWhom = $mail->toWhom;
+                $replyDate = $mail->replyDate;
+                $assessor_id = $mail->assessor_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
+                    'toWhom' => $toWhom, 'replyDate' => $replyDate, 'assessor_id' => $assessor_id];
+            }
+            $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
+        }
+        $this->response->send();
+        return;
     }
 
     /**
      * @Route("/getUnAssessed", methods = {"GET", "OPTIONS"})
      */
-    public function GetUnAssessedAction()
+    public function GetUnAssessedAction()//审核退回
     {
-
+        $uid = $this->request->get('uid');
+        //$uid = $this->session->get('user_id');
+        $handledMails = ReplyMail::find([
+            'conditions' => 'status=?1 AND handler_id=?2',
+            'bind' => [1 => 2, 2 => $uid],
+            'column' => 'id, mail_id, subject, reply_id,  toWhom, replyDate'
+        ]);
+        if($handledMails->getFirst() == null)
+        {
+            $this->response->setJsonContent(['count' => 0, 'uid' => $this->session->get('user_id')]);
+        }
+        else
+        {
+            $mailList = array();
+            foreach($handledMails as $mail)
+            {
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $subject = base64_decode( $mail->subject );
+                $reply_id = $mail->reply_id;
+                $toWhom = $mail->toWhom;
+                $assessor_id = $mail->assessor_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
+                    'toWhom' => $toWhom, 'assessor_id' => $assessor_id];
+            }
+            $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
+        }
+        $this->response->send();
+        return;
     }
 
     /**
