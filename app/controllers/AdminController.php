@@ -84,30 +84,33 @@ class AdminController extends Base
      */
     public function ConfEmailAction()
     {
-        $info = $this->request->getJsonRawBody();
-        if(isset($info->email_address)) $email_address = $info->email_address;
-        if(isset($info->imap_address)) $imap_address = $info->imap_address;
-        if(isset($info->password))
-        {
-            $password = $info->password;
-            $passwordConfirmation = $info->passwordConfirmation;
-            if($password != $passwordConfirmation)
-            {
-                $this->response->setJsonContent(['message' => '两次密码不一致']);
-                $this->response->send();
-                return;
-            }
-        }
-        if(isset($info->compay_name)) $company_name = $info->company_name;
-        $updated_at = round(microtime(true) * 1000);
         try
         {
-            $mailbox = new PhpImap\Mailbox("{{$imap_address}:993/imap/ssl}INBOX", $email_address, $password);
-            $mailbox->searchMailbox('ALL');
+            $info = $this->request->getJsonRawBody();
             $filePath = __DIR__.'/../config/email.json';
-            $data = "{\"email_address\": \"{$email_address}\", \"imap_address\": \"{$imap_address}\", \"password\": \"{$password}\", \"updated_at\": \"{$updated_at}\"}";
+            $jsonString = file_get_contents($filePath);
+            $jsonObj = json_decode($jsonString);
+            if(isset($info->email_address)) $jsonObj->email_address = $info->email_address;
+            if(isset($info->imap_address)) $jsonObj->imap_address = $info->imap_address;
+            if(isset($info->smtp_address)) $jsonObj->smtp_address = $info->smtp_address;
+            if(isset($info->password))
+            {
+                if($info->password != $info->passwordConfirmation)
+                {
+                    $this->response->setJsonContent(['message' => '两次密码不一致']);
+                    $this->response->send();
+                    return;
+                }
+                $jsonObj->password = $info->password;
+            }
+            if(isset($info->compay_name)) $jsonObj->company_name = $info->company_name;
+            $jsonObj->updated_at = round(microtime(true) * 1000);
+            $mailbox = new PhpImap\Mailbox("{{$jsonObj->imap_address}:993/imap/ssl}INBOX", $jsonObj->email_address, $jsonObj->password);
+            $mailbox->searchMailbox('ALL');
+            $data = json_encode( $jsonObj );
             file_put_contents($filePath, $data);
-            $this->response->setJsonContent(['email_address' => $email_address, 'imap_address' => $imap_address, 'updated_at' => $updated_at]);
+            $this->response->setJsonContent(['email_address' => $jsonObj->email_address, 'imap_address' => $jsonObj->imap_address,
+                'smtp_address' => $jsonObj->smtp_address, 'updated_at' => $jsonObj->updated_at]);
         }
         catch (Exception $e)
         {

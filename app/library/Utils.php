@@ -1,0 +1,73 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: sify
+ * Date: 15-7-8
+ * Time: 下午9:28
+ */
+require __DIR__.'/../vendor/autoload.php';
+
+class Utils {
+    static function sendMail($replyMail_id)
+    {
+        $db_username = 'root';
+        $db_password = 'sify39502';
+        $db_name = 'pmail';
+        $mail = new PHPMailer();
+        //配置
+        $filePath = __DIR__.'/../config/email.json';
+        $jsonString = file_get_contents($filePath);
+        $jsonObj = json_decode($jsonString);
+        $mail->isSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Host = $jsonObj->smtp_address;
+        $mail->Username = $jsonObj->email_address;
+        $mail->Password = $jsonObj->password;
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = 994;
+        $mail->CharSet = 'utf-8';
+        //邮件信息
+        $con = mysql_connect("localhost:3306", $db_username, $db_password);
+        mysql_select_db($db_name, $con);
+        if(!$con)
+        {
+            return 'Connection Error';
+        }
+        $result = mysql_query("SELECT * FROM `replyMail` WHERE id={$replyMail_id}");
+        if(!$result)
+        {
+            return 'DB Error'.mysql_errno();
+        }
+        $array = ['id' => ''];
+        while($row = mysql_fetch_array($result))
+        {
+            $array['id'] = $row['id'];
+            break;
+        }
+        $mail->From = $jsonObj->email_address;
+        $mail->FromName = $jsonObj->company_name;
+        $mail->addAddress($row['toWhom']);
+        $mail->isHTML(true);
+        $mail->Subject = base64_decode( $row['subject'] );
+        $mail->Body = base64_decode( $row['body'] );
+        if(!$mail->send()) {
+            return 'Mailer Error: ' . $mail->ErrorInfo;
+        } else {
+            return 'Success!';
+        }
+        $date = date('Y-m-d H:i:s');
+        mysql_query("UPDATE `replyMail` SET replyDate='{$date}' WHERE id={$replyMail_id}");
+        mysql_close($con);
+    }
+
+    static function create_uuid() {
+        $char_id = strtoupper(md5(uniqid(mt_rand(), true)));
+        $hyphen = chr(45);// "-"
+        $uuid =substr($char_id, 0, 8).$hyphen
+            .substr($char_id, 8, 4).$hyphen
+            .substr($char_id,12, 4).$hyphen
+            .substr($char_id,16, 4).$hyphen
+            .substr($char_id,20,12);
+        return $uuid;
+    }
+}

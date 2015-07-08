@@ -17,12 +17,13 @@
         {
             require __DIR__.'/../vendor/autoload.php';
 
+            //收邮件
             //sina
             //$mailbox = new PhpImap\Mailbox('{imap.sina.com:993/imap/ssl}INBOX', 'softpioneers@sina.com', 'softbuaa');
 
             //163
             //163第一连接会提示，到邮箱中点安全提醒邮件以开启支持
-            $mailbox = new PhpImap\Mailbox('{imap.163.com:993/imap/ssl}INBOX', 'softpioneers@163.com', 'npcxcizgalswoafa','/home/sify/文档/localhost');
+            /*$mailbox = new PhpImap\Mailbox('{imap.163.com:993/imap/ssl}INBOX', 'softpioneers@163.com', 'npcxcizgalswoafa','/home/sify/文档/localhost');
 
             $mailsIds = $mailbox->searchMailBox('UNSEEN');
             foreach($mailsIds as $id)
@@ -41,14 +42,50 @@
                     $a[] = ['cid' => $cid, 'filePath' => $fileName];
                     $body = str_replace($cid,'http://localhost/'.$fileName, $body);
                 }
-                $this->response->setJsonContent(['id' => $id, 'mail_id' => $mail->id]);
-                $this->response->send();
-                return;
+            }*/
+
+
+            //发邮件
+            $mail = new PHPMailer();
+
+//            $mail->SMTPDebug = 2;                               // Enable verbose debug output
+
+            $mail->isSMTP();                                      // Set mailer to use SMTP
+            $mail->Host = 'smtp.163.com';  // Specify main and backup SMTP servers
+            $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            $mail->Username = 'softpioneers@163.com';                 // SMTP username
+            $mail->Password = 'npcxcizgalswoafa';                           // SMTP password
+            $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+            $mail->Port = 994;                                    // TCP port to connect to
+
+
+            $mail->CharSet = 'utf-8';
+            $mail->From = 'softpioneers@163.com';
+            $mail->FromName = 'Dak-App 科技有限公司';
+//            $mail->addAddress('joe@example.net', 'Joe User');     // Add a recipient
+            $mail->addAddress('softpioneers@163.com');               // Name is optional
+//            $mail->addReplyTo('info@example.com', 'Information');
+//            $mail->addCC('cc@example.com');
+//            $mail->addBCC('bcc@example.com');
+
+//            $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+//            $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+            $mail->isHTML(true);                                  // Set email format to HTML
+
+            $mail->Subject = '孙星宇';
+            $mail->Body    = '<h1>HeHe<h1/> <br/><b>XiXi</b>';
+//            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+            if(!$mail->send()) {
+                echo 'Message could not be sent.';
+                echo 'Mailer Error: ' . $mail->ErrorInfo;
+            } else {
+                echo 'Message has been sent';
             }
         }
 
         /**
-         * @Route("/code", methods = {"GET", "OPTIONS"})
+         * @Route("/code")
          */
         public function CodeAction()
         {
@@ -67,16 +104,21 @@
 //            echo round(microtime(true) * 1000);//1970 1月1号至今的毫秒数
 
             //email body
-            $this->view->enable();
-            $mail_id = $this->request->get('id');
-            $mail = ReceiveMail::findFirst([
-                'conditions' => 'id=?1',
-                'bind' => [1 =>$mail_id]
-            ]);
-            $body = base64_decode($mail->body);
-            $this->response->setContentType('text/html','utf-8');
-            $this->response->setContent($body);
-            $this->response->send();
-            return;
+//            $this->view->enable();
+//            $mail_id = $this->request->get('id');
+//            $mail = ReceiveMail::findFirst([
+//                'conditions' => 'id=?1',
+//                'bind' => [1 =>$mail_id]
+//            ]);
+//            $body = base64_decode($mail->body);
+//            $this->response->setContentType('text/html','utf-8');
+//            $this->response->setContent($body);
+//            $this->response->send();
+//            return;
+//            $filePath = __DIR__.'/../config/email.json';
+//            $jsonString = file_get_contents($filePath);
+//            $jsonObj = json_decode($jsonString);
+//            $jsonObj->email_address = "hehe";
+//            echo json_encode($jsonObj);
         }
     }

@@ -34,11 +34,10 @@ class AuthController extends Base
         }
         else
         {
-            $user_array = $user->toArray();
-            $this->session->set('user_id', $user_array['id']);
-            $this->session->set('user_name', $user_array['name']);
-            $this->session->set('user_role', $user_array['role']);
-            $this->response->setJsonContent(['user_id' => $this->session->get('user_id'), 'user_name' => $this->session->get('user_name'), 'user_role' => $this->session->get('user_role')]);
+//            $this->session->set('user_id', $user_array['id']);
+//            $this->session->set('user_name', $user_array['name']);
+//            $this->session->set('user_role', $user_array['role']);
+            $this->response->setJsonContent(['user_id' => $user->id, 'user_name' => $user->name, 'user_role' => $user->role]);
         }
         $this->response->send();
         return;

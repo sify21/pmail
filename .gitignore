@@ -5,3 +5,4 @@ app/vendor
 app/config/email.json
 app/crontab/auto_get_mails.php
 .directory
+app/library/Utils.php
