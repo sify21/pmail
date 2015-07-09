@@ -267,7 +267,7 @@ class HandlerController extends Base{
                 $this->response->send();
                 return;
             }
-            $subject = $info->subject;
+            $subject = "回复：".$info->subject;
             $body = $info->body;
             $toWhom = $info->toWhom;
             $handler_id = $info->handler_id;
