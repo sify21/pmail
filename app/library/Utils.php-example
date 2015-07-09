@@ -53,12 +53,12 @@ class Utils {
         $date = date('Y-m-d H:i:s');
         mysql_query("UPDATE `replyMail` SET replyDate='{$date}' WHERE id={$replyMail_id}");
         mysql_query("UPDATE `replyMail` SET status= 0 WHERE id={$replyMail_id}");
+        mysql_close($con);
         if(!$mail->send()) {
             return 'Mailer Error: ' . $mail->ErrorInfo;
         } else {
             return ['id' => $replyMail_id, 'subject'=> $mail->Subject, 'toWhom' =>$row['toWhom'], 'replyDate' => $date];
         }
-        mysql_close($con);
     }
 
     static function create_uuid() {
