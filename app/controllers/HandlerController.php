@@ -393,7 +393,7 @@ class HandlerController extends Base{
     {
         $uid = $this->request->get('uid');
         $templates = Template::find([
-            'conditions' => 'handler_id=?1',
+            'conditions' => 'handler_id=?1 OR handler_id IS NULL',
             'bind' => [1 => $uid]
         ]);
         $templateList = array();
