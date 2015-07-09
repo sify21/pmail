@@ -86,7 +86,7 @@ class CommonController extends Base{
         {
             try
             {
-                if(isset($info->subject)) $email->suject = base64_encode( $info->subject );
+                if(isset($info->subject)) $email->subject = base64_encode( $info->subject );
                 if(isset($info->body)) $email->body = base64_encode( $info->body );
                 if(isset($info->reply_id)) $email->reply_id = $info->reply_id;
                 if(isset($info->toWhom)) $email->toWhom = $info->toWhom;
