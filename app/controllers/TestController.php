@@ -33,9 +33,9 @@
 //                preg_match_all('/^cid:(.*?\\$163\\.com$)/', $mail->textHtml, $matches);
 //                print_r($matches);
 //                $combine = array_combine($matches[1], $matches[0]);
-                $files = $mail->getAttachments();
+                $image_files = $mail->getAttachments();
                 $body = $mail->textHtml;
-                foreach ($files as $attach)
+                foreach ($image_files as $attach)
                 {
                     $cid ='cid:'.$attach->id;
                     $fileName = basename($attach->filePath);
@@ -68,7 +68,7 @@
 //            $mail->addCC('cc@example.com');
 //            $mail->addBCC('bcc@example.com');
 
-//            $mail->addAttachment('/var/tmp/file.tar.gz');         // Add files
+//            $mail->addAttachment('/var/tmp/file.tar.gz');         // Add image_files
 //            $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
             $mail->isHTML(true);                                  // Set email format to HTML
 
@@ -89,11 +89,11 @@
          */
         public function CodeAction()
         {
-            $this->dispatcher->forward([
-                'action' => 'forward',
-                'params' => ['uid' => $this->request->get('uid'), 'count' => 2]
-            ]);
-            return;
+//            $this->dispatcher->forward([
+//                'action' => 'forward',
+//                'params' => ['uid' => $this->request->get('uid'), 'count' => 2]
+//            ]);
+//            return;
             //array
 //            $a = ['a', 'b', 'c', 'd'];好了
 //            $b = array();
@@ -127,12 +127,7 @@
 //            $jsonObj = json_decode($jsonString);
 //            $jsonObj->email_address = "hehe";
 //            echo json_encode($jsonObj);
-        }
 
-        /**
-         * @Route("/forward", methods = {"GET", "OPTIONS"})
-         */
-        public function forwardAction()
-        {
+//            echo gethostname();
         }
     }
