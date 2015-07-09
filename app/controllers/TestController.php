@@ -33,9 +33,9 @@
 //                preg_match_all('/^cid:(.*?\\$163\\.com$)/', $mail->textHtml, $matches);
 //                print_r($matches);
 //                $combine = array_combine($matches[1], $matches[0]);
-                $attachments = $mail->getAttachments();
+                $files = $mail->getAttachments();
                 $body = $mail->textHtml;
-                foreach ($attachments as $attach)
+                foreach ($files as $attach)
                 {
                     $cid ='cid:'.$attach->id;
                     $fileName = basename($attach->filePath);
@@ -68,7 +68,7 @@
 //            $mail->addCC('cc@example.com');
 //            $mail->addBCC('bcc@example.com');
 
-//            $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+//            $mail->addAttachment('/var/tmp/file.tar.gz');         // Add files
 //            $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
             $mail->isHTML(true);                                  // Set email format to HTML
 
@@ -134,6 +134,5 @@
          */
         public function forwardAction()
         {
-            echo $this->request->get('uid').'|'.$this->dispatcher->getp;
         }
     }
