@@ -363,9 +363,9 @@ class HandlerController extends Base{
     }
 
     /**
-     * @Route("/getTemplate", methods = {"GET", "OPTIONS"})
+     * @Route("/getTemplates", methods = {"GET", "OPTIONS"})
      */
-    public function GetTemplateAction()
+    public function GetTemplatesAction()
     {
         $uid = $this->request->get('uid');
         $templates = Template::find([
