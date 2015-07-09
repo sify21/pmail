@@ -179,9 +179,36 @@ class CommonController extends Base{
             $status = $email->status;
             $handler_id = $email->handler_id;
             $assessor_id = $email->assessor_id;
-            $this->response->setJsonContent(['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'body' => $body, 'reply_id' => $reply_id,'toWhom' => $toWhom,
-                'replyDate' => $replyDate, 'assessor_advice' => $assessor_advice, 'status' => $status, 'handler_id' => $handler_id, 'assessor_id' => $assessor_id]);
-        }
+            $original_mail = null;
+            if($reply_id != null)
+            {
+                $original_mail = ReceiveMail::findFirst([
+                    'conditions' => 'id = ?1',
+                    'bind' => [1 => $reply_id]
+                ]);
+                if($original_mail == null)
+                {
+                    $this->response->setJsonContent(['message' => '原邮件不存在！']);
+                    $this->response->send();
+                    return;
+                }
+            }
+            $o_id = $original_mail->id;
+            $o_mail_id = base64_decode( $original_mail->mail_id );
+            $o_subject = base64_decode($original_mail->subject);
+            $o_body = base64_decode($original_mail->body);
+            $o_fromAddress = $original_mail->fromAddress;
+            $o_receiveDate = $original_mail->receiveDate;
+            $o_tags = base64_decode($original_mail->tags);
+            $o_status = $original_mail->status;
+            $o_deadline = $original_mail->deadline;
+            $o_dispatcher_id = $original_mail->dispatcher_id;
+            $o_handler_id = $original_mail->handler_id;
+            $this->response->setJsonContent(['curent_mail' => ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'body' => $body, 'reply_id' => $reply_id,'toWhom' => $toWhom,
+                'replyDate' => $replyDate, 'assessor_advice' => $assessor_advice, 'status' => $status, 'handler_id' => $handler_id, 'assessor_id' => $assessor_id],
+                'original_mail' => ['id' => $o_id, 'mail_id' => $o_mail_id, 'subject' => $o_subject, 'body' => $o_body, 'fromAddress' => $o_fromAddress, 'receiveDate' => $o_receiveDate,
+                'tags' => $o_tags, 'status' => $o_status, 'deadline' => $o_deadline, 'dispatcher_id' => $o_dispatcher_id, 'handler_id' => $o_handler_id]]);
+            }
         $this->response->send();
         return;
     }
