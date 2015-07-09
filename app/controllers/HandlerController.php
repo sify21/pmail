@@ -338,8 +338,15 @@ class HandlerController extends Base{
                 $body = $body."<br/><br/><hr/><span style='color:grey'>{$original_mail_address}</span>在原邮件中写到：".$original_mail_body;
                 $replyMail->reply_id = $info->reply_id;
             }
-            $uuid = Utils::create_uuid();
-            $replyMail->mail_id = base64_encode( $uuid );
+            if(!isset($info->mail_id))
+            {
+                $uuid = Utils::create_uuid();
+                $replyMail->mail_id = base64_encode( $uuid );
+            }
+            else
+            {
+                $replyMail->mail_id = base64_encode( $info->mail_id );
+            }
             $replyMail->subject = base64_encode( $subject );
             $replyMail->body = base64_encode( $body );
             $replyMail->toWhom = $toWhom;
@@ -416,7 +423,7 @@ class HandlerController extends Base{
         $template->subject = base64_encode($info->subject);
         $template->body = base64_encode($info->body);
         $template->save();
-        $this->response->setJsonContent(['id' => $template->id, 'handler_id' => $info->handler_id, 'name' => $info->name, 'subject' => $info->subject, 'body' => $info->body]);
+        $this->response->setJsonContent(['template_id' => $template->id, 'handler_id' => $info->handler_id, 'name' => $info->name, 'subject' => $info->subject, 'body' => $info->body]);
         $this->response->send();
         return;
     }
@@ -426,17 +433,16 @@ class HandlerController extends Base{
      */
     public function UploadFileAction()
     {
-        // Check if the user has uploaded files
         if ($this->request->hasFiles() == true)
         {
-            // Print the real file names and sizes
             foreach ($this->request->getUploadedFiles() as $file)
             {
-                //Print file details
                 echo $file->getName(), " ", $file->getSize(), "\n";
-                //Move the file into the application
-                $file->moveTo('files/' . $file->getName());
+                $dir = realpath('..').'/image_files/';
+                $file_name = Utils::create_uuid().$file->getName();
+                $file->moveTo($dir.$file_name);
             }
         }
+        $this->response->setJsonContent(['file_path' => 'www.sify21.com:8001/']);
     }
 }
