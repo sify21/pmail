@@ -438,11 +438,13 @@ class HandlerController extends Base{
             foreach ($this->request->getUploadedFiles() as $file)
             {
                 echo $file->getName(), " ", $file->getSize(), "\n";
-                $dir = realpath('..').'/image_files/';
-                $file_name = Utils::create_uuid().$file->getName();
+                $dir = realpath('../..').'/phpinfo/';
+                $file_name = Utils::create_uuid().'_'.$file->getName();
                 $file->moveTo($dir.$file_name);
             }
         }
-        $this->response->setJsonContent(['file_path' => 'www.sify21.com:8001/']);
+        $this->response->setJsonContent(['dir'=> $dir, 'file_path' => 'http://phpinfo.sify21.com/'.$file_name]);
+        $this->response->send();
+        return;
     }
 }
