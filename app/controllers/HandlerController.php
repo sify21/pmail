@@ -315,13 +315,14 @@ class HandlerController extends Base{
                 $this->response->send();
                 return;
             }
-            $subject = "回复：".$info->subject;
+            $subject = $info->subject;
             $body = $info->body;
             $toWhom = $info->toWhom;
             $handler_id = $info->handler_id;
             $replyMail = new ReplyMail();
-            if(isset($info->reply_id))//一封回复邮件,在body后面加上原邮件内容
+            if(isset($info->reply_id))//一封回复邮件,在body后面加上原邮件内容,同时主题前加 回复：
             {
+                $subject = "回复：".$subject;
                 $original_mail = ReceiveMail::findFirst([
                     'conditions' => 'id = ?1',
                     'bind' => [1 => $info->reply_id]
@@ -418,5 +419,24 @@ class HandlerController extends Base{
         $this->response->setJsonContent(['id' => $template->id, 'handler_id' => $info->handler_id, 'name' => $info->name, 'subject' => $info->subject, 'body' => $info->body]);
         $this->response->send();
         return;
+    }
+
+    /**
+     * @Route("/uploadFile", methods = {"POST", "OPTIONS"})
+     */
+    public function UploadFileAction()
+    {
+        // Check if the user has uploaded files
+        if ($this->request->hasFiles() == true)
+        {
+            // Print the real file names and sizes
+            foreach ($this->request->getUploadedFiles() as $file)
+            {
+                //Print file details
+                echo $file->getName(), " ", $file->getSize(), "\n";
+                //Move the file into the application
+                $file->moveTo('files/' . $file->getName());
+            }
+        }
     }
 }
