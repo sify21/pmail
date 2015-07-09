@@ -33,7 +33,7 @@ class CommonController extends Base{
                 if(isset($info->body)) $email->body = base64_encode( $info->body );
                 if(isset($info->fromAddress)) $email->fromAddress = $info->fromAddress;
                 if(isset($info->receiveDate)) $email->receiveDate = $info->receiveDate;
-                if(isset($info->tags)) $email->tags = $info->tags;
+                if(isset($info->tags)) $email->tags = base64_encode( $info->tags );
                 if(isset($info->status)) $email->status = $info->status;
                 if(isset($info->deadline)) $email->deadline = date($info->deadline);
                 if(isset($info->dispatcher_id)) $email->dispatcher_id = $info->dispatcher_id;
