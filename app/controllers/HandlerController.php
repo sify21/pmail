@@ -361,4 +361,57 @@ class HandlerController extends Base{
         $this->response->send();
         return;
     }
+
+    /**
+     * @Route("/getTemplate", methods = {"GET", "OPTIONS"})
+     */
+    public function GetTemplate()
+    {
+        $uid = $this->request->get('uid');
+        $templates = Template::find([
+            'conditions' => 'handler_id=?1',
+            'bind' => [1 => $uid]
+        ]);
+        $templateList = array();
+        if($templates->getFirst() == null)
+        {
+            $this->response->setJsonContent(['message' => 'No Templates Found!']);
+            $this->response->send();
+            return;
+        }
+        foreach ($templates as $template)
+        {
+            $template_id = $template->id;
+            $name = base64_decode( $template->name );
+            $subject = base64_decode( $template->subject );
+            $body = base64_decode( $template->body );
+            $templateList[] = ['template_id' => $template_id, 'name' => $name, 'subject' => $subject, 'body' => $body];
+        }
+        $this->response->setContent($templateList);
+        $this->response->send();
+        return;
+    }
+
+    /**
+     * @Route("/createTemplate" methods = {"POST", "OPTIONS"})
+     */
+    public function CreateTemplate()
+    {
+        $info = $this->request->getJsonRawBody();
+        if(!isset($info->handler_id)||!isset($info->name)||!isset($info->subject)||!isset($info->body))
+        {
+            $this->response->setJsonContent(['message' => 'No Data!']);
+            $this->response->send();
+            return;
+        }
+        $template = new Template();
+        $template->handler_id = $info->handler_id;
+        $template->name = base64_encode($info->name);
+        $template->subject = base64_encode($info->subject);
+        $template->body = base64_encode($info->body);
+        $template->save();
+        $this->response->setJsonContent(['message' => 'success!']);
+        $this->response->send();
+        return;
+    }
 }

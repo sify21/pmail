@@ -11,7 +11,8 @@ class Template extends Phalcon\Mvc\Model
     public $id;
     public $name;
     public $handler_id;
-    public $content;
+    public $subject;
+    public $body;
     public function getSource()
     {
         return 'template';
