@@ -50,10 +50,36 @@ class HandlerController extends Base{
      */
     public function GetUnHandledAction()
     {
-        $this->dispatcher->forward([
-            'action' => 'getReceiveList',
-            'params' => ['uid' => $this->request->get('uid'), 'status' => 1]
+        $uid = $this->request->get('uid');
+        $status = 1;
+        if($uid == null||$status == null)
+        {
+            $this->response->setJsonContent(['message' => 'No Data!']);
+        }
+        $receiveMails = ReceiveMail::find([
+            'conditions' => 'status=?1 AND handler_id=?2',
+            'bind' => [1 => $status, 2 => $uid],
+            'column' => 'id, mail_id, subject, fromAddress, receiveDate, tags, status, deadline, dispatcher_id, handler_id'
         ]);
+        if($receiveMails->getFirst() == null)
+        {
+            $this->response->setJsonContent(['count' => 0, 'uid' => $this->session->get('user_id')]);
+        }
+        else
+        {
+            $mailList = array();
+            foreach($receiveMails as $mail)
+            {
+                $id = $mail->id;
+                $mail_id = base64_decode( $mail->mail_id );
+                $fromAddress = $mail->fromAddress;
+                $subject = base64_decode( $mail->subject );
+                $receiveDate = $mail->receiveDate;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
+            }
+            $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
+        }
+        $this->response->send();
         return;
     }
 
