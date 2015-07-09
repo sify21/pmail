@@ -6,26 +6,31 @@
 class HandlerController extends Base{
     //下面的那么多getmailList，逻辑都是一样的，只是status不同，所以冗余代码很多；因为之前是把status拆成了好多字段来判断，相当于是给项目制造复杂度了；
     //因此数据库设计是一定要遵循最少字段原则，完成同样功能数据库字段越少代码逻辑肯定越清晰
+
     /**
-     * @Route("/getUnHandled", methods = {"GET", "OPTIONS"})
+     * @Route("/getReceiveList")
      */
-    public function GetUnHandledAction()
+    public function getReceiveList()
     {
         $uid = $this->request->get('uid');
-        //$uid = $this->session->get('user_id');
-        $unHandledMails = ReceiveMail::find([
+        $status = $this->request->get('status');
+        if($uid == null||$status == null)
+        {
+            $this->response->setJsonContent(['message' => 'No Data!']);
+        }
+        $receiveMails = ReceiveMail::find([
             'conditions' => 'status=?1 AND handler_id=?2',
-            'bind' => [1 => 1, 2 => $uid],
-            'column' => 'id, mail_id, fromAddress, subject, receiveDate'
+            'bind' => [1 => $status, 2 => $uid],
+            'column' => 'id, mail_id, subject, fromAddress, receiveDate, tags, status, deadline, dispatcher_id, handler_id'
         ]);
-        if($unHandledMails->getFirst() == null)
+        if($receiveMails->getFirst() == null)
         {
             $this->response->setJsonContent(['count' => 0, 'uid' => $this->session->get('user_id')]);
         }
         else
         {
             $mailList = array();
-            foreach($unHandledMails as $mail)
+            foreach($receiveMails as $mail)
             {
                 $id = $mail->id;
                 $mail_id = base64_decode( $mail->mail_id );
@@ -37,6 +42,18 @@ class HandlerController extends Base{
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
         $this->response->send();
+        return;
+    }
+
+    /**
+     * @Route("/getUnHandled", methods = {"GET", "OPTIONS"})
+     */
+    public function GetUnHandledAction()
+    {
+        $this->dispatcher->forward([
+            'action' => 'getReceiveList',
+            'params' => ['uid' => $this->request->get('uid'), 'status' => 1]
+        ]);
         return;
     }
 

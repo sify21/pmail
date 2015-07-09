@@ -85,10 +85,15 @@
         }
 
         /**
-         * @Route("/code")
+         * @Route("/code", methods = {"GET", "OPTIONS"})
          */
         public function CodeAction()
         {
+            $this->dispatcher->forward([
+                'action' => 'forward',
+                'params' => ['uid' => $this->request->get('uid'), 'count' => 2]
+            ]);
+            return;
             //array
 //            $a = ['a', 'b', 'c', 'd'];好了
 //            $b = array();
@@ -102,6 +107,8 @@
             //date
 //            echo date('YmdHis');//实际时间
 //            echo round(microtime(true) * 1000);//1970 1月1号至今的毫秒数
+//            $d = date('2013-10-04 13:30:32');
+//            print_r($d);
 
             //email body
 //            $this->view->enable();
@@ -120,5 +127,13 @@
 //            $jsonObj = json_decode($jsonString);
 //            $jsonObj->email_address = "hehe";
 //            echo json_encode($jsonObj);
+        }
+
+        /**
+         * @Route("/forward", methods = {"GET", "OPTIONS"})
+         */
+        public function forwardAction()
+        {
+            echo $this->request->get('uid').'|'.$this->dispatcher->getp;
         }
     }

@@ -35,6 +35,7 @@ class CommonController extends Base{
                 if(isset($info->receiveDate)) $email->receiveDate = $info->receiveDate;
                 if(isset($info->tags)) $email->tags = $info->tags;
                 if(isset($info->status)) $email->status = $info->status;
+                if(isset($info->deadline)) $email->deadline = date($info->deadline);
                 if(isset($info->dispatcher_id)) $email->dispatcher_id = $info->dispatcher_id;
                 if(isset($info->handler_id)) $email->handler_id = $info->handler_id;
                 $email->save();

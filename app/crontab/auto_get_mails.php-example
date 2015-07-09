@@ -12,9 +12,9 @@ try
     $filePath = __DIR__.'/../config/email.json';
     $jsonString = file_get_contents($filePath);
     $jsonObj = json_decode($jsonString);
-    $attachments_Dir = '/home/';
+    $attachments_Dir = '';
     $attachments_Uri = 'http://localhost/';
-    $db_name = '';
+    $db_name = 'pmail';
     $db_username = '';
     $db_password = '';
     $mailBox = new PhpImap\Mailbox("{{$jsonObj->imap_address}:993/imap/ssl}INBOX", $jsonObj->email_address, $jsonObj->password, $attachments_Dir);

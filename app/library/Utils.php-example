@@ -10,9 +10,9 @@ require __DIR__.'/../vendor/autoload.php';
 class Utils {
     static function sendMail($replyMail_id)
     {
-        $db_username = '';
+        $db_username = 'root';
         $db_password = '';
-        $db_name = '';
+        $db_name = 'pmail';
         $mail = new PHPMailer();
         //配置
         $filePath = __DIR__.'/../config/email.json';
@@ -50,13 +50,14 @@ class Utils {
         $mail->isHTML(true);
         $mail->Subject = base64_decode( $row['subject'] );
         $mail->Body = base64_decode( $row['body'] );
+        $date = date('Y-m-d H:i:s');
+        mysql_query("UPDATE `replyMail` SET replyDate='{$date}' WHERE id={$replyMail_id}");
+        mysql_query("UPDATE `replyMail` SET status= 0 WHERE id={$replyMail_id}");
         if(!$mail->send()) {
             return 'Mailer Error: ' . $mail->ErrorInfo;
         } else {
-            return 'Success!';
+            return ['id' => $replyMail_id, 'subject'=> $mail->Subject, 'toWhom' =>$row['toWhom'], 'replyDate' => $date];
         }
-        $date = date('Y-m-d H:i:s');
-        mysql_query("UPDATE `replyMail` SET replyDate='{$date}' WHERE id={$replyMail_id}");
         mysql_close($con);
     }
 
