@@ -320,6 +320,7 @@ class HandlerController extends Base{
             $toWhom = $info->toWhom;
             $handler_id = $info->handler_id;
             $replyMail = new ReplyMail();
+            $original_mail = null;
             if(isset($info->reply_id))//一封回复邮件,在body后面加上原邮件内容,同时主题前加 回复：
             {
                 $subject = "回复：".$subject;
@@ -333,11 +334,19 @@ class HandlerController extends Base{
                     $this->response->send();
                     return;
                 }
-                $original_mail_body = base64_decode($original_mail->body);
-                $original_mail_address = $original_mail->fromAddress;
-                $body = $body."<br/><br/><hr/><span style='color:grey'>{$original_mail_address}</span>在原邮件中写到：".$original_mail_body;
                 $replyMail->reply_id = $info->reply_id;
             }
+            $o_id = $original_mail->id;
+            $o_mail_id = base64_decode( $original_mail->mail_id );
+            $o_subject = base64_decode($original_mail->subject);
+            $o_body = base64_decode($original_mail->body);
+            $o_fromAddress = $original_mail->fromAddress;
+            $o_receiveDate = $original_mail->receiveDate;
+            $o_tags = base64_decode($original_mail->tags);
+            $o_status = $original_mail->status;
+            $o_deadline = $original_mail->deadline;
+            $o_dispatcher_id = $original_mail->dispatcher_id;
+            $o_handler_id = $original_mail->handler_id;
             if(!isset($info->mail_id))
             {
                 $uuid = Utils::create_uuid();
@@ -363,9 +372,11 @@ class HandlerController extends Base{
                 $replyMail->save();
                 Utils::sendMail($replyMail->id);
             }
-            $this->response->setJsonContent(['id' => $replyMail->id, 'mail_id' => $replyMail->mail_id, 'subject' => base64_decode($replyMail->subject),
+            $this->response->setJsonContent(['current_main' => ['id' => $replyMail->id, 'mail_id' => $replyMail->mail_id, 'subject' => base64_decode($replyMail->subject),
                 'body' => base64_decode($replyMail->body), 'reply_id' => $replyMail->reply_id, 'toWhom' => $replyMail->toWhom, 'reply_date' => $replyMail->replyDate,
-                'status' => $replyMail->status, 'handler_id' => $replyMail->handler_id, 'assessor_id' => $replyMail->assessor_id]);
+                'status' => $replyMail->status, 'handler_id' => $replyMail->handler_id, 'assessor_id' => $replyMail->assessor_id],
+                'original_mail' => ['id' => $o_id, 'mail_id' => $o_mail_id, 'subject' => $o_subject, 'body' => $o_body, 'fromAddress' => $o_fromAddress, 'receiveDate' => $o_receiveDate,
+                    'tags' => $o_tags, 'status' => $o_status, 'deadline' => $o_deadline, 'dispatcher_id' => $o_dispatcher_id, 'handler_id' => $o_handler_id]]);
         }
         catch(Exception $e)
         {
