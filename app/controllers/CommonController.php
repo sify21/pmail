@@ -102,7 +102,7 @@ class CommonController extends Base{
                 $reply_id = $email->reply_id;
                 $toWhom = $email->toWhom;
                 $replyDate = $email->replyDate;
-                $assessor_advice = $email->assessor_advice;
+                $assessor_advice = base64_decode( $email->assessor_advice );
                 $status = $email->status;
                 $handler_id = $email->handler_id;
                 $assessor_id = $email->assessor_id;

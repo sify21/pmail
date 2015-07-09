@@ -4,6 +4,8 @@
  */
 
 class HandlerController extends Base{
+    //下面的那么多getmailList，逻辑都是一样的，只是status不同，所以冗余代码很多；因为之前是把status拆成了好多字段来判断，相当于是给项目制造复杂度了；
+    //因此数据库设计是一定要遵循最少字段原则，完成同样功能数据库字段越少代码逻辑肯定越清晰
     /**
      * @Route("/getUnHandled", methods = {"GET", "OPTIONS"})
      */
@@ -82,7 +84,7 @@ class HandlerController extends Base{
         $assessingMails = ReplyMail::find([
             'conditions' => 'status=?1 AND handler_id=?2',
             'bind' => [1 => 1, 2 => $uid],
-            'column' => 'id, mail_id, subject, reply_id, toWhom, assessor_id'
+            'column' => 'id, mail_id, subject, reply_id, toWhom, replyDate, assessor_advice, status, assessor_id, handler_id'
         ]);
         if($assessingMails->getFirst() == null)
         {
@@ -98,9 +100,13 @@ class HandlerController extends Base{
                 $subject = base64_decode( $mail->subject );
                 $reply_id = $mail->reply_id;
                 $toWhom = $mail->toWhom;
+                $replyDate = $mail->replyDate;
+                $assessor_advice = base64_decode( $mail->assessor_advice );
+                $status = $mail->status;
                 $assessor_id = $mail->assessor_id;
-                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
-                    'toWhom' => $toWhom, 'assessor_id' => $assessor_id];
+                $handler_id = $mail->handler_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,'toWhom' => $toWhom, 'replyDate' => $replyDate,
+                    'assessor_advice' => $assessor_advice, 'status' => $status, 'assessor_id' => $assessor_id, 'handler_id' => $handler_id];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -118,7 +124,7 @@ class HandlerController extends Base{
         $assessedMails = ReplyMail::find([
             'conditions' => 'status=?1 AND handler_id=?2',
             'bind' => [1 => 3, 2 => $uid],
-            'column' => 'id, mail_id, subject, reply_id,  toWhom, replyDate, assessor_id'
+            'column' => 'id, mail_id, subject, reply_id, toWhom, replyDate, assessor_advice, status, assessor_id, handler_id'
         ]);
         if($assessedMails->getFirst() == null)
         {
@@ -135,9 +141,12 @@ class HandlerController extends Base{
                 $reply_id = $mail->reply_id;
                 $toWhom = $mail->toWhom;
                 $replyDate = $mail->replyDate;
+                $assessor_advice = base64_decode( $mail->assessor_advice );
+                $status = $mail->status;
                 $assessor_id = $mail->assessor_id;
-                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
-                    'toWhom' => $toWhom, 'replyDate' => $replyDate, 'assessor_id' => $assessor_id];
+                $handler_id = $mail->handler_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,'toWhom' => $toWhom, 'replyDate' => $replyDate,
+                    'assessor_advice' => $assessor_advice, 'status' => $status, 'assessor_id' => $assessor_id, 'handler_id' => $handler_id];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -155,7 +164,7 @@ class HandlerController extends Base{
         $unAssessedMails = ReplyMail::find([
             'conditions' => 'status=?1 AND handler_id=?2',
             'bind' => [1 => 2, 2 => $uid],
-            'column' => 'id, mail_id, subject, reply_id, toWhom, assessor_id'
+            'column' => 'id, mail_id, subject, reply_id, toWhom, replyDate, assessor_advice, status, assessor_id, handler_id'
         ]);
         if($unAssessedMails->getFirst() == null)
         {
@@ -171,9 +180,13 @@ class HandlerController extends Base{
                 $subject = base64_decode( $mail->subject );
                 $reply_id = $mail->reply_id;
                 $toWhom = $mail->toWhom;
+                $replyDate = $mail->replyDate;
+                $assessor_advice = base64_decode( $mail->assessor_advice );
+                $status = $mail->status;
                 $assessor_id = $mail->assessor_id;
-                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
-                    'toWhom' => $toWhom, 'assessor_id' => $assessor_id];
+                $handler_id = $mail->handler_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,'toWhom' => $toWhom, 'replyDate' => $replyDate,
+                    'assessor_advice' => $assessor_advice, 'status' => $status, 'assessor_id' => $assessor_id, 'handler_id' => $handler_id];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -191,7 +204,7 @@ class HandlerController extends Base{
         $handledMails = ReplyMail::find([
             'conditions' => 'status=?1 AND handler_id=?2',
             'bind' => [1 => 0, 2 => $uid],
-            'column' => 'id, mail_id, subject, reply_id, toWhom, replyDate, assessor_id'
+            'column' => 'id, mail_id, subject, reply_id, toWhom, replyDate, assessor_advice, status, assessor_id, handler_id'
         ]);
         if($handledMails->getFirst() == null)
         {
@@ -208,9 +221,12 @@ class HandlerController extends Base{
                 $reply_id = $mail->reply_id;
                 $toWhom = $mail->toWhom;
                 $replyDate = $mail->replyDate;
+                $assessor_advice = base64_decode( $mail->assessor_advice );
+                $status = $mail->status;
                 $assessor_id = $mail->assessor_id;
-                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,
-                    'toWhom' => $toWhom, 'replyDate' => $replyDate, 'assessor_id' => $assessor_id];
+                $handler_id = $mail->handler_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'reply_id' => $reply_id,'toWhom' => $toWhom, 'replyDate' => $replyDate,
+                    'assessor_advice' => $assessor_advice, 'status' => $status, 'assessor_id' => $assessor_id, 'handler_id' => $handler_id];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
@@ -269,7 +285,8 @@ class HandlerController extends Base{
                     return;
                 }
                 $original_mail_body = base64_decode($original_mail->body);
-                $body = $body."<br/><br/><hr/>"."在原邮件中写到：".$original_mail_body;
+                $original_mail_address = $original_mail->fromAddress;
+                $body = $body."<br/><br/><hr/><span style='color:grey'>{$original_mail_address}</span>在原邮件中写到：".$original_mail_body;
                 $replyMail->reply_id = $info->reply_id;
             }
             $uuid = Utils::create_uuid();
