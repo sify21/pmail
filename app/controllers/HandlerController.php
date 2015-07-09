@@ -51,8 +51,7 @@ class HandlerController extends Base{
     public function GetUnHandledAction()
     {
         $uid = $this->request->get('uid');
-        $status = 1;
-        if($uid == null||$status == null)
+        if($uid == null)
         {
             $this->response->setJsonContent(['message' => 'No Data!']);
         }
@@ -72,10 +71,16 @@ class HandlerController extends Base{
             {
                 $id = $mail->id;
                 $mail_id = base64_decode( $mail->mail_id );
-                $fromAddress = $mail->fromAddress;
                 $subject = base64_decode( $mail->subject );
+                $fromAddress = $mail->fromAddress;
                 $receiveDate = $mail->receiveDate;
-                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'fromAddress' => $fromAddress, 'subject' => $subject, 'receiveDate' => $receiveDate];
+                $tags = base64_decode( $mail->tags);
+                $status = $mail->status;
+                $deadline = $mail->deadline;
+                $dispatcher_id = $mail->dispatcher_id;
+                $handler_id = $mail->handler_id;
+                $mailList[] = ['id' => $id, 'mail_id' => $mail_id, 'subject' => $subject, 'fromAddress' => $fromAddress, 'receiveDate' => $receiveDate,
+                'tags' => $tags, 'status' => $status, 'deadline' => $deadline, 'dispatcher_id' => $dispatcher_id, 'handler_id' => $handler_id];
             }
             $this->response->setJsonContent(['count' => count($mailList), 'mailList' => $mailList]);
         }
