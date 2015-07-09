@@ -57,8 +57,8 @@ class HandlerController extends Base{
             $this->response->setJsonContent(['message' => 'No Data!']);
         }
         $receiveMails = ReceiveMail::find([
-            'conditions' => 'status=?1 AND handler_id=?2',
-            'bind' => [1 => $status, 2 => $uid],
+            'conditions' => '(status=1 OR status=3) AND handler_id=?1',
+            'bind' => [1 => $uid],
             'column' => 'id, mail_id, subject, fromAddress, receiveDate, tags, status, deadline, dispatcher_id, handler_id'
         ]);
         if($receiveMails->getFirst() == null)
@@ -410,7 +410,7 @@ class HandlerController extends Base{
         $template->subject = base64_encode($info->subject);
         $template->body = base64_encode($info->body);
         $template->save();
-        $this->response->setJsonContent(['message' => 'success!']);
+        $this->response->setJsonContent(['id' => $template->id, 'handler_id' => $info->handler_id, 'name' => $info->name, 'subject' => $info->subject, 'body' => $info->body]);
         $this->response->send();
         return;
     }
