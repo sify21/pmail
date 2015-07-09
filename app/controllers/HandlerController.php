@@ -365,7 +365,7 @@ class HandlerController extends Base{
     /**
      * @Route("/getTemplate", methods = {"GET", "OPTIONS"})
      */
-    public function GetTemplate()
+    public function GetTemplateAction()
     {
         $uid = $this->request->get('uid');
         $templates = Template::find([
@@ -387,15 +387,15 @@ class HandlerController extends Base{
             $body = base64_decode( $template->body );
             $templateList[] = ['template_id' => $template_id, 'name' => $name, 'subject' => $subject, 'body' => $body];
         }
-        $this->response->setContent($templateList);
+        $this->response->setJsonContent( $templateList );
         $this->response->send();
         return;
     }
 
     /**
-     * @Route("/createTemplate" methods = {"POST", "OPTIONS"})
+     * @Route("/createTemplate", methods = {"POST", "OPTIONS"})
      */
-    public function CreateTemplate()
+    public function CreateTemplateAction()
     {
         $info = $this->request->getJsonRawBody();
         if(!isset($info->handler_id)||!isset($info->name)||!isset($info->subject)||!isset($info->body))
