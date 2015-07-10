@@ -334,6 +334,8 @@ class HandlerController extends Base{
                     $this->response->send();
                     return;
                 }
+                $original_mail->status = 2;
+                $original_mail->save();
                 $replyMail->reply_id = $info->reply_id;
             }
             $o_id = $original_mail->id;

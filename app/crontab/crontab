@@ -1,0 +1,12 @@
+* * * * * php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 10; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 20; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 30; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 40; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 50; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+
+
+* * * * * php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 15; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 30; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php
+* * * * * sleep 45; php /home/sify/文档/Pmail/app/crontab/auto_get_mails.php

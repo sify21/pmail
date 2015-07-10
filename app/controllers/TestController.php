@@ -109,6 +109,7 @@
 //            echo round(microtime(true) * 1000);//1970 1月1号至今的毫秒数
 //            $d = date('2013-10-04 13:30:32');
 //            print_r($d);
+//            echo date('2018-09-09 25:23');
 
             //email body
 //            $this->view->enable();
@@ -129,5 +130,12 @@
 //            echo json_encode($jsonObj);
 
 //            echo gethostname();
+$data = file_get_contents("/home/sify/文档/Pmail/app/controllers/sidebar-hero.html");
+            $template =new Template();
+            $template->id = 2;
+            $template->name = base64_encode("企业模板2");
+            $template->subject = base64_encode("主题：");
+            $template->body = base64_encode($data);
+            $template->save();
         }
     }
